@@ -8,29 +8,26 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
-import controllers.LoginController;
+import controllers.LoginViewController;
 
 /**
  * View class for the login
  * @author Nico
  *
  */
-public class LoginView {
+public class LoginView extends JFrame{
 
 	/**
 	 * Controller for this view
 	 */
-	private LoginController login_controller;
-
-	private JFrame frame = new JFrame();
+	private LoginViewController login_controller;
 
 	private JButton login_btn = new JButton("Login");
 	private JButton register_btn = new JButton("Reset");
 	private JTextField uID_field = new JTextField();
 	private JPasswordField passwd_field = new JPasswordField();
-	private JLabel uID_label = new JLabel("userID:");
-	private JLabel passwd_label = new JLabel("password:");
+	private JLabel uID_label = new JLabel("User ID:");
+	private JLabel passwd_label = new JLabel("Password:");
 	private JLabel msg_label = new JLabel();
 
 	/**
@@ -39,7 +36,7 @@ public class LoginView {
 	public LoginView(){
 
 		try {
-			login_controller=new LoginController(this);
+			login_controller=new LoginViewController(this);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -64,21 +61,34 @@ public class LoginView {
 //		register_btn.addActionListener(login_controller);
 //		register_btn.setActionCommand("register");
 
-		frame.add(uID_label);
-		frame.add(passwd_label);
-		frame.add(msg_label);
-		frame.add(uID_field);
-		frame.add(passwd_field);
-		frame.add(login_btn);
-		frame.add(register_btn);
+		getContentPane().add(uID_label);
+		getContentPane().add(passwd_label);
+		getContentPane().add(msg_label);
+		getContentPane().add(uID_field);
+		getContentPane().add(passwd_field);
+		getContentPane().add(login_btn);
 		
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(500,500);
-		frame.setLayout(null);
-		frame.setVisible(true);
-
+		setJFrame();
 	}
 	
+	public void setJFrame() {
+		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setLocationByPlatform(true);
+        setUndecorated(true);
+        setSize(450,450);
+        setResizable(false);
+        getContentPane().setLayout(null);
+		setVisible(true);
+	}
+	
+	/**
+	 * Method used to discard the login view when the login
+	 * is successful and switch to the main JFrame
+	 */
+	public void disposeWindow() {
+		this.dispose();
+		new MainView();
+	}
 
 	
 	public JButton getLogin_btn() {

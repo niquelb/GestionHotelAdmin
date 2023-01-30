@@ -11,10 +11,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import com.google.gson.*;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import utils.ParameterStringBuilder;
-import utils.TempUserDB;
 import views.LoginView;
 
 /**
@@ -23,7 +24,7 @@ import views.LoginView;
  * @author Nico
  *
  */
-public class LoginController implements ActionListener{
+public class LoginViewController implements ActionListener{
 	
 	private LoginView login_view;
 	private String user_id, password;
@@ -31,7 +32,7 @@ public class LoginController implements ActionListener{
 	private final URL URL;
 	private final HttpURLConnection CONNECTION;
 	private int conn_status;
-	private JsonParser json_parser;
+	private JSONParser parser = new JSONParser();
 	
 	/**
 	 * Constructor, initializes the view, the URL for the connection
@@ -40,9 +41,8 @@ public class LoginController implements ActionListener{
 	 * @param login_view View class of the login
 	 * @throws IOException 
 	 */
-	public LoginController(LoginView login_view) throws IOException {
+	public LoginViewController(LoginView login_view) throws IOException {
 		super();
-		TempUserDB.getInfo();
 		this.login_view = login_view;
 		this.URL=new URL("http://localhost/gestionhotelera/sw_user.php");
 		this.CONNECTION = (HttpURLConnection) this.URL.openConnection();
@@ -60,11 +60,13 @@ public class LoginController implements ActionListener{
 
 			try {
 				if(login(user_id,password)) {
-					login_view.getMsg_label().setForeground(Color.green);
-					login_view.getMsg_label().setText("Login exitoso.");
+					this.login_view.getMsg_label().setForeground(Color.green);
+					this.login_view.getMsg_label().setText("Login exitoso.");
+					this.login_view.disposeWindow();
+					
 				} else {
-					login_view.getMsg_label().setForeground(Color.red);
-					login_view.getMsg_label().setText("Datos incorrectos.");
+					this.login_view.getMsg_label().setForeground(Color.red);
+					this.login_view.getMsg_label().setText("Datos incorrectos.");
 				}
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -111,13 +113,35 @@ public class LoginController implements ActionListener{
 		    content.append(input_line);
 		}
 		in.close();
+
+		if (this.conn_status==HttpURLConnection.HTTP_OK) {
+			//TODO fix "connection in progress" exception when pressing the login button 2 times
+			try {
+				// Parse JSON string using JSON parser.
+				JSONObject object = (JSONObject) this.parser.parse(content.toString());
+
+				if (object.get("success").toString().equals("true")) {
+					System.out.println(object.get("msg"));
+					this.CONNECTION.disconnect();
+					return true;
+				} else {
+					System.out.println(object.get("msg"));
+					this.CONNECTION.disconnect();
+					return false;
+				}
+				
+			  } catch (ParseException e) {
+				System.out.println(e.getMessage());
+				this.CONNECTION.disconnect();
+				return false;
+			  }
+		} else {
+			System.out.println("Error en la conexion: "+this.conn_status);
+			this.CONNECTION.disconnect();
+			return false;
+		}
+
 		
-		JsonObject object=this.json_parser.parse(content.toString()).getAsJsonObject();
-		
-		System.out.println("Status: "+this.conn_status+"\nJson: "+object);
-		this.CONNECTION.disconnect();
-		
-		return true;
 		
 	}
 	
