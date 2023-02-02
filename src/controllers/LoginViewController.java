@@ -44,8 +44,8 @@ public class LoginViewController implements ActionListener{
 	public LoginViewController(LoginView login_view) throws IOException {
 		super();
 		this.login_view = login_view;
-		this.URL=new URL("http://localhost/gestionhotelera/sw_user.php");
-		this.CONNECTION = (HttpURLConnection) this.URL.openConnection();
+		URL=new URL("http://localhost/gestionhotelera/sw_user.php");
+		CONNECTION = (HttpURLConnection) URL.openConnection();
 	}
 
 	/**
@@ -60,13 +60,13 @@ public class LoginViewController implements ActionListener{
 
 			try {
 				if(login(user_id,password)) {
-					this.login_view.getMsg_label().setForeground(Color.green);
-					this.login_view.getMsg_label().setText("Login exitoso.");
-					this.login_view.disposeWindow();
+					login_view.getMsg_label().setForeground(Color.green);
+					login_view.getMsg_label().setText("Login exitoso.");
+					login_view.disposeWindow();
 					
 				} else {
-					this.login_view.getMsg_label().setForeground(Color.red);
-					this.login_view.getMsg_label().setText("Datos incorrectos.");
+					login_view.getMsg_label().setForeground(Color.red);
+					login_view.getMsg_label().setText("Datos incorrectos.");
 				}
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -88,25 +88,25 @@ public class LoginViewController implements ActionListener{
 	 */
 	public boolean login(String user_id, String password) throws IOException {
 		
-		this.CONNECTION.setRequestMethod("POST");
+		CONNECTION.setRequestMethod("POST");
 
 		Map<String, String> parameters = new HashMap<>();
 		parameters.put("action", "login");
 		parameters.put("user", "{\"email\":\""+user_id+"\", \"password\":\""+password+"\"}");
 
-		this.CONNECTION.setDoOutput(true);
-		DataOutputStream out = new DataOutputStream(this.CONNECTION.getOutputStream());
+		CONNECTION.setDoOutput(true);
+		DataOutputStream out = new DataOutputStream(CONNECTION.getOutputStream());
 		out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
 		out.flush();
 		out.close();
 
-		this.CONNECTION.setConnectTimeout(5000);
-		this.CONNECTION.setReadTimeout(5000);
+		CONNECTION.setConnectTimeout(5000);
+		CONNECTION.setReadTimeout(5000);
 
-		this.conn_status = this.CONNECTION.getResponseCode();
+		conn_status = CONNECTION.getResponseCode();
 		
 		BufferedReader in = new BufferedReader(
-				  new InputStreamReader(this.CONNECTION.getInputStream()));
+				  new InputStreamReader(CONNECTION.getInputStream()));
 		String input_line;
 		StringBuffer content = new StringBuffer();
 		while ((input_line = in.readLine()) != null) {
@@ -114,30 +114,30 @@ public class LoginViewController implements ActionListener{
 		}
 		in.close();
 
-		if (this.conn_status==HttpURLConnection.HTTP_OK) {
+		if (conn_status==HttpURLConnection.HTTP_OK) {
 			//TODO fix "connection in progress" exception when pressing the login button 2 times
 			try {
 				// Parse JSON string using JSON parser.
-				JSONObject object = (JSONObject) this.parser.parse(content.toString());
+				JSONObject object = (JSONObject) parser.parse(content.toString());
 
 				if (object.get("success").toString().equals("true")) {
 					System.out.println(object.get("msg"));
-					this.CONNECTION.disconnect();
+					CONNECTION.disconnect();
 					return true;
 				} else {
 					System.out.println(object.get("msg"));
-					this.CONNECTION.disconnect();
+					CONNECTION.disconnect();
 					return false;
 				}
 				
 			  } catch (ParseException e) {
 				System.out.println(e.getMessage());
-				this.CONNECTION.disconnect();
+				CONNECTION.disconnect();
 				return false;
 			  }
 		} else {
-			System.out.println("Error en la conexion: "+this.conn_status);
-			this.CONNECTION.disconnect();
+			System.out.println("Error en la conexion: "+conn_status);
+			CONNECTION.disconnect();
 			return false;
 		}
 

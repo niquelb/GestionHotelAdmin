@@ -2,17 +2,17 @@ package views;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.JLabel;
+
+import controllers.SideNavigationViewController;
 
 public class SideNavigationView extends JPanel {
+	
+	private SideNavigationViewController controller=new SideNavigationViewController(this);
 
 	private JButton users_button=new JButton("USUARIOS");
 	private JButton rooms_button=new JButton("HABITACIONES");
@@ -25,25 +25,21 @@ public class SideNavigationView extends JPanel {
 	public SideNavigationView() {
 		setBackground(new Color(128, 128, 255));
 		
-		users_button.setBounds(10, 11, 163, 40);
-		users_button.setForeground(new Color(0, 0, 0));
-		users_button.setBackground(new Color(255, 255, 255));
-		users_button.setFocusable(false);
+		setButtonProperties(users_button);
+		setButtonProperties(rooms_button);
+		setButtonProperties(bookings_button);
+		setButtonProperties(log_out_button);
 		
-		rooms_button.setBounds(10, 62, 163, 40);
-		rooms_button.setForeground(new Color(0, 0, 0));
-		rooms_button.setBackground(new Color(255, 255, 255));
-		rooms_button.setFocusable(false);
+		users_button.setBounds(10, 11, 200, 40);
+		rooms_button.setBounds(10, 62, 200, 40);
+		bookings_button.setBounds(10, 113, 200, 40);
+		log_out_button.setBounds(10, 164, 200, 40);
 		
-		bookings_button.setBounds(10, 113, 163, 40);
-		bookings_button.setForeground(new Color(0, 0, 0));
-		bookings_button.setBackground(new Color(255, 255, 255));
-		bookings_button.setFocusable(false);
-				
-		log_out_button.setBounds(10, 164, 163, 40);
-		log_out_button.setForeground(new Color(0, 0, 0));
-		log_out_button.setBackground(new Color(255, 255, 255));
-		log_out_button.setFocusable(false);
+		users_button.setActionCommand("users");
+		rooms_button.setActionCommand("rooms");
+		bookings_button.setActionCommand("bookings");
+		log_out_button.setActionCommand("log_out");
+		
 		
 		setLayout(null);
 		
@@ -51,6 +47,15 @@ public class SideNavigationView extends JPanel {
 		add(rooms_button);
 		add(bookings_button);
 		add(log_out_button);
+	}
+	
+	public void setButtonProperties(JButton button) {
+		button.setForeground(new Color(0, 0, 0));
+		button.setBackground(new Color(255, 255, 255));
+		button.setFocusable(false);
+		button.setFont(new Font("Roboto Light", Font.BOLD, 18));
+		
+		button.addActionListener(controller);
 	}
 	
 

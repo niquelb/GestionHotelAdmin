@@ -16,6 +16,9 @@ import org.mariadb.jdbc.Statement;
  */
 public class BDConnector {
 	private static final String BD="gestionhotel";
+	private static final String URL="jdbc:mariadb://localhost:3306/";
+	private static final String BD_USER="root";
+	private static final String BD_PASSWORD="";
 	private static ResultSet rs=null;
 	
 	/**
@@ -27,7 +30,7 @@ public class BDConnector {
 		Connection conn=null;
 		try {			
 			Class.forName("org.mariadb.jdbc.Driver");
-			conn=(Connection) DriverManager.getConnection("jdbc:mariadb://localhost:3306/"+BD,"root","");
+			conn=(Connection) DriverManager.getConnection(URL+BD,BD_USER,BD_PASSWORD);
 			if (conn!=null) {
 				System.out.println("Succesful connection: "+BD);
 			} else {

@@ -9,6 +9,7 @@ import java.awt.Color;
 public class MainView extends JFrame {
 
 	private final JPanel main_panel=new JPanel();
+	private final CenterContentView center_content=new CenterContentView();
 	private final SideNavigationView side_navigation=new SideNavigationView();
 
 	/**
@@ -16,8 +17,12 @@ public class MainView extends JFrame {
 	 */
 	public MainView() {
 		main_panel.setLayout(null);
-		side_navigation.setBounds(0, 86, 187, 614);
-		this.main_panel.add(this.side_navigation);
+		
+		side_navigation.setBounds(0, 86, 221, 614);
+		main_panel.add(side_navigation);
+		
+		center_content.setBounds(220, 86, 780, 614);
+		main_panel.add(center_content);
 		
 		JPanel header = new JPanel();
 		header.setBackground(new Color(128, 128, 255));
