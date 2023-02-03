@@ -4,6 +4,7 @@ package views;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import controllers.UserEditorViewController;
 
@@ -16,7 +17,7 @@ import java.awt.Color;
 
 public class UserEditorView extends JFrame {
 
-	private final UserEditorViewController controller=new UserEditorViewController(this);
+	private final UserEditorViewController controller;
 	
 	private JPanel pane;
 	private JTextField textFieldEmail;
@@ -29,7 +30,7 @@ public class UserEditorView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public UserEditorView() {
+	public UserEditorView(String u_id) {
 		pane = new JPanel();
 		pane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -38,8 +39,10 @@ public class UserEditorView extends JFrame {
         setLocationByPlatform(true);
         setUndecorated(true);
         setSize(500,500);
+        
         setContentPane(pane);
         pane.setLayout(null);
+        pane.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
         
         JLabel lblEmail = new JLabel("Email");
         lblEmail.setFont(new Font("Roboto Light", Font.PLAIN, 18));
@@ -95,12 +98,15 @@ public class UserEditorView extends JFrame {
         passwordField.setBounds(30, 309, 440, 20);
         pane.add(passwordField);
         
-        setButtonProperties(btnSubmit);
         btnSubmit.setActionCommand("submit");
         btnSubmit.setBounds(150, 366, 154, 31);
         pane.add(btnSubmit);
         setResizable(false);
 		setVisible(true);
+		
+		controller=new UserEditorViewController(this, u_id);
+
+		setButtonProperties(btnSubmit);
 	}
 	
 	public void setButtonProperties(JButton button) {

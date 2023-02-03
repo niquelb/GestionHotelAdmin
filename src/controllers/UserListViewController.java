@@ -14,17 +14,17 @@ import org.mariadb.jdbc.Connection;
 
 import main.Main;
 import models.UserModel;
-import views.CenterContentView;
+import views.UserListView;
 import views.UserEditorView;
 import utils.ButtonEditor;
 import utils.ButtonRenderer;
 
-public class CenterContentViewController implements ActionListener {
-	private final CenterContentView view;
+public class UserListViewController implements ActionListener {
+	private final UserListView view;
 	private static final Connection conn=Main.conn;
 	private String params=null;
 	
-	public CenterContentViewController(CenterContentView view) {
+	public UserListViewController(UserListView view) {
 		super();
 		this.view = view;
 		
@@ -61,7 +61,7 @@ public class CenterContentViewController implements ActionListener {
 		}
 		
 		table.getColumn("Modificar").setCellRenderer(new ButtonRenderer());
-		table.getColumn("Modificar").setCellEditor(new ButtonEditor(new JCheckBox()));
+		table.getColumn("Modificar").setCellEditor(new ButtonEditor(new JCheckBox(), view.getTable(), al));
 		
 		// The width is -18 to compensate for the vertical scrollbar
 		table.setPreferredSize(new Dimension(pane.getWidth()-18, table.getPreferredSize().height));
@@ -69,8 +69,8 @@ public class CenterContentViewController implements ActionListener {
 		pane.setViewportView(table);
 	}
 	
-	public static void editUser() {
-		new UserEditorView();
+	public static void editUser(String u_id) {
+		new UserEditorView(u_id);
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class CenterContentViewController implements ActionListener {
 			}
 			
 			if (name!=null && !name.equals("")) {
-				params="nombre LIKE \""+name+'"';
+				params="nombre LIKE \""+name+"%\"";
 				
 				if (email!=null && !email.equals("")) {
 					System.out.println(email);

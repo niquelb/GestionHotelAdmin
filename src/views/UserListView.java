@@ -6,16 +6,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import controllers.CenterContentViewController;
+import controllers.UserListViewController;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.ScrollPaneConstants;
 
-public class CenterContentView extends JPanel {
+public class UserListView extends JPanel {
 	
-	private final CenterContentViewController controller=new CenterContentViewController(this);
+	private final UserListViewController controller=new UserListViewController(this);
 	
 	private JTable table;
 	private JScrollPane pane;
@@ -27,15 +27,18 @@ public class CenterContentView extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public CenterContentView() {	
+	public UserListView() {	
 		table=new JTable();
 		pane=new JScrollPane();
 		pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		pane.setBounds(10, 164, 706, 439);
 		
-		table.setSize(pane.getWidth(), pane.getHeight());
+		pane.setBackground(Color.DARK_GRAY);
+		pane.setForeground(Color.WHITE);
+		
 		setLayout(null);
 		add(pane);
+		
 		
 		textFieldName = new JTextField();
 		textFieldName.setBounds(109, 84, 222, 20);

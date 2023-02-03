@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import org.mariadb.jdbc.Connection;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import utils.BDConnector;
 
 /**
@@ -61,10 +62,15 @@ public class UserModel {
 	}
 
 
-
+	/**
+	 * Method for getting an ArrayList with all users
+	 * @param conn SQL Connection object
+	 * @param params "WHERE" parameters for filtering results
+	 * @return ArrayList with all users
+	 */
 	public static ArrayList<UserModel> getUserList(Connection conn, String params) {
 		String stmt=null;
-		if (params!=null) 
+		if (params!=null && !params.equals("")) 
 			stmt="SELECT * FROM users WHERE "+params+";";
 		else 
 			stmt="SELECT * FROM users;";
@@ -74,8 +80,8 @@ public class UserModel {
 		
 		try {
 			while (rs.next()) {
-				al.add(new UserModel(String.valueOf(rs.getObject("email")), String.valueOf(rs.getObject("nombre")),
-						String.valueOf(rs.getObject("apellidos")), String.valueOf(rs.getObject("telefono"))));
+				al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
+						rs.getString("apellidos"), rs.getString("telefono")));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -83,6 +89,47 @@ public class UserModel {
 		}
 		
 		return al;
+	}
+	
+	/**
+	 * Method for getting 1 UserModel object for the DB, if
+	 * there are multiple results from the query, only the
+	 * first one is returned
+	 * @param conn SQL Connection object
+	 * @param params "WHERE" parameters for filtering results
+	 * @return UserModel object
+	 */
+	public static UserModel getUser(Connection conn, String params) {
+		String stmt=null;
+		if (params==null || params.equals("")) {
+			stmt="SELECT * FROM users LIMIT 1;";
+		} else {
+			stmt="SELECT * FROM users WHERE "+params+"LIMIT 1;";
+		}
+		ResultSet rs=BDConnector.execStmt(stmt, conn);
+		try {
+			if(rs.next()) 
+				return new UserModel(rs.getString("email"), rs.getString("nombre"), rs.getString("apellidos"), rs.getString("telefono"));
+			else return null;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	public static void updateUser(String u_id, UserModel new_user) {
+		String email=(new_user.getEmail()!=null)?new_user.getEmail():"";
+		String name=(new_user.getName()!=null)?new_user.getName():"";
+		String last_names=(new_user.getLast_names()!=null)?new_user.getLast_names():"";
+		String phone=(new_user.getPhone_num()!=null)?new_user.getPhone_num():"";
+		String password=(new_user.getPassword()!=null)?new_user.getPassword():"";
+		String password_hashed=BCrypt.withDefaults().hashToString(12, password.toCharArray());
+		
+		System.out.println(password_hashed);
+		System.out.println(BCrypt.verifyer().verify(password.toCharArray(), password_hashed));
+		
 	}
 
 	/**
