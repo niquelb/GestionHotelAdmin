@@ -15,6 +15,7 @@ import org.mariadb.jdbc.Connection;
 import main.Main;
 import models.UserModel;
 import views.UserListView;
+import views.UserCreatorView;
 import views.UserEditorView;
 import utils.ButtonEditor;
 import utils.ButtonRenderer;
@@ -49,22 +50,20 @@ public class UserListViewController implements ActionListener {
 		table.getTableHeader().setReorderingAllowed(false);
 		
 		for (UserModel userModel : al) {
-			if (!userModel.getEmail().equals("")) {
-				Object[] row = new Object[5];
-				row[0]=userModel.getEmail();
-				row[1]=userModel.getName();
-				row[2]=userModel.getLast_names();
-				row[3]=userModel.getPhone_num();
-				row[4]="Editar";
-				model.addRow(row);
-			}
+			Object[] row = new Object[5];
+			row[0]=userModel.getEmail();
+			row[1]=userModel.getName();
+			row[2]=userModel.getLast_names();
+			row[3]=userModel.getPhone_num();
+			row[4]="Editar";
+			model.addRow(row);
 		}
 		
 		table.getColumn("Modificar").setCellRenderer(new ButtonRenderer());
-		table.getColumn("Modificar").setCellEditor(new ButtonEditor(new JCheckBox(), view.getTable(), al));
+		table.getColumn("Modificar").setCellEditor(new ButtonEditor(new JCheckBox(), table, al));
 		
 		// The width is -18 to compensate for the vertical scrollbar
-		table.setPreferredSize(new Dimension(pane.getWidth()-18, table.getPreferredSize().height));
+		table.setPreferredSize(new Dimension(pane.getWidth()-18, pane.getHeight()));
 		
 		pane.setViewportView(table);
 	}
@@ -81,8 +80,6 @@ public class UserListViewController implements ActionListener {
 			String name=String.valueOf(view.getTextFieldFiltersName().getText());
 			String email=String.valueOf(view.getTextFieldFiltersEmail().getText());
 			
-			
-			
 			buildTable(email, name);
 			view.getBtnClearFilters().setVisible(true);
 			
@@ -95,6 +92,9 @@ public class UserListViewController implements ActionListener {
 			
 			buildTable(null, null);
 			
+			break;
+		case "add_user":
+			new UserCreatorView();
 			break;
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + e.getActionCommand());

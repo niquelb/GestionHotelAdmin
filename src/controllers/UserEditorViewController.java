@@ -84,7 +84,7 @@ public class UserEditorViewController implements ActionListener, MouseListener {
 
 			String[] arr= {"Confirmar","Cancelar"};
 			int n = JOptionPane.showOptionDialog(view,
-				    "Desea confirmar la edicion del usuario "+user.getName(),
+				    "Desea confirmar la edicion del usuario "+user.getName()+'?',
 				    "Confirmar Edicion?",
 				    JOptionPane.YES_NO_OPTION,
 				    JOptionPane.PLAIN_MESSAGE,

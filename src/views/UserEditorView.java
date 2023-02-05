@@ -35,6 +35,9 @@ public class UserEditorView extends JFrame {
 	 * Create the frame.
 	 */
 	public UserEditorView(String u_id) {
+		setTitle("Editar Usuario");
+		setResizable(false);
+		setAlwaysOnTop(true);
 		pane = new JPanel();
 		pane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -106,7 +109,6 @@ public class UserEditorView extends JFrame {
         btnSubmit.setActionCommand("submit");
         btnSubmit.setBounds(152, 415, 154, 31);
         pane.add(btnSubmit);
-        setResizable(false);
 		setVisible(true);
 
 		JLabel lblPasswordConfirm = new JLabel("Contraseña Actual (Obligatoria)");

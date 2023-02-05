@@ -112,6 +112,7 @@ public class UserModel {
 		
 		if (email.equals("") && name.equals("")) {
 			try {
+				rs.absolute(2);
 				while (rs.next()) {
 					al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
 							rs.getString("apellidos"), rs.getString("telefono")));
@@ -125,6 +126,7 @@ public class UserModel {
 			}
 		} else if (!email.equals("")) {
 			try {
+				rs.absolute(2);
 				while (rs.next()) {
 					if (rs.getString("email").toUpperCase().contains(email.toUpperCase())) {
 						al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
@@ -140,6 +142,7 @@ public class UserModel {
 			}
 		} else {
 			try {
+				rs.absolute(2);
 				while (rs.next()) {
 					if (rs.getString("nombre").toUpperCase().contains(name.toUpperCase())) {
 						al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
@@ -218,7 +221,8 @@ public class UserModel {
 			rs.updateString("password", password_hashed);
 			
 			rs.insertRow();
-			rs.first();
+			
+			rs=BDConnector.execStmt("SELECT * FROM users;", conn);
 		} catch (SQLException e) {
 			// TODO: handle exception
 			e.printStackTrace();

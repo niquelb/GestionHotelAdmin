@@ -50,7 +50,7 @@ public class ButtonEditor extends DefaultCellEditor {
         if (isPushed) {
         	// Passes the email that correlates the table row with the user in the ArrayList, which is the user of that row in the table
         	// The AL index is +1 because the first row in the DB is null
-            UserListViewController.editUser(al.get(table.getSelectedRow()+1).getEmail());
+            UserListViewController.editUser(al.get(table.getSelectedRow()).getEmail());
             }
         isPushed = false;
         return label;

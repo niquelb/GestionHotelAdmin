@@ -32,6 +32,7 @@ public class UserListView extends JPanel {
 	private JTextField textFieldEmail;
 	private JButton btnSubmitFilters;
 	private JButton btnClearFilters;
+	private JButton btnAddUser;
 	
 	/**
 	 * Create the panel.
@@ -52,7 +53,7 @@ public class UserListView extends JPanel {
 		add(filters_panel);
 		
 		pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		pane.setBounds(10, 164, 706, 439);
+		pane.setBounds(10, 204, 706, 495);
 		
 		pane.setBackground(Color.DARK_GRAY);
 		pane.setForeground(new Color(45, 45, 45));
@@ -131,6 +132,12 @@ public class UserListView extends JPanel {
 								.addComponent(btnSubmitFilters, Alignment.TRAILING))))
 					.addContainerGap(34, Short.MAX_VALUE))
 		);
+		
+		btnAddUser = new JButton("AÑADIR USUARIO");
+		btnAddUser.setBounds(10, 164, 706, 29);
+		ComponentInit.setButtonProperties(btnAddUser, controller);
+		btnAddUser.setActionCommand("add_user");
+		add(btnAddUser);
 		
 		controller.buildTable(null, null);
 	}
