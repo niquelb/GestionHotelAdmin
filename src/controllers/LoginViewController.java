@@ -1,8 +1,10 @@
 package controllers;
 
-import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,12 +13,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.JLabel;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import utils.ParameterStringBuilder;
 import views.LoginView;
+import views.MainView;
 
 /**
  * Controller class for the login
@@ -24,9 +30,9 @@ import views.LoginView;
  * @author Nico
  *
  */
-public class LoginViewController implements ActionListener{
+public class LoginViewController implements ActionListener, MouseListener{
 	
-	private LoginView login_view;
+	private LoginView view;
 	private String user_id, password;
 	
 	private final URL URL;
@@ -38,12 +44,12 @@ public class LoginViewController implements ActionListener{
 	 * Constructor, initializes the view, the URL for the connection
 	 * and the connection itself
 	 * 
-	 * @param login_view View class of the login
+	 * @param view View class of the login
 	 * @throws IOException 
 	 */
-	public LoginViewController(LoginView login_view) throws IOException {
+	public LoginViewController(LoginView view) throws IOException {
 		super();
-		this.login_view = login_view;
+		this.view = view;
 		URL=new URL("http://localhost/gestionhotelera/sw_user.php");
 		CONNECTION = (HttpURLConnection) URL.openConnection();
 	}
@@ -55,18 +61,16 @@ public class LoginViewController implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
 		case "login":
-			user_id = login_view.getuID_field().getText();
-			password = String.valueOf(login_view.getPasswd_field().getPassword());
+			user_id = view.getTextFieldEmail().getText();
+			password = String.valueOf(view.getPasswordField().getPassword());
 
 			try {
 				if(login(user_id,password)) {
-					login_view.getMsg_label().setForeground(Color.green);
-					login_view.getMsg_label().setText("Login exitoso.");
-					login_view.disposeWindow();
+					view.dispose();
+					new MainView();
 					
 				} else {
-					login_view.getMsg_label().setForeground(Color.red);
-					login_view.getMsg_label().setText("Datos incorrectos.");
+					view.getLblError().setVisible(true);;
 				}
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -150,6 +154,35 @@ public class LoginViewController implements ActionListener{
 	 */
 	public void register() {
 		//TODO implement this method
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (e.getSource().getClass()==JLabel.class) {			
+			view.dispose();
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		view.setCursor(Cursor.HAND_CURSOR);
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		view.setCursor(Cursor.DEFAULT_CURSOR);
 	}
 	
 }

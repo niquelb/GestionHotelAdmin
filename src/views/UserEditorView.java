@@ -7,6 +7,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import controllers.UserEditorViewController;
+import utils.ComponentInit;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -106,16 +107,7 @@ public class UserEditorView extends JFrame {
 		
 		controller=new UserEditorViewController(this, u_id);
 
-		setButtonProperties(btnSubmit);
-	}
-	
-	public void setButtonProperties(JButton button) {
-		button.setForeground(new Color(0, 0, 0));
-		button.setBackground(new Color(255, 255, 255));
-		button.setFocusable(false);
-		button.setFont(new Font("Roboto Light", Font.BOLD, 18));
-		
-		button.addActionListener(controller);
+		ComponentInit.setButtonProperties(btnSubmit,controller);
 	}
 
 	/**

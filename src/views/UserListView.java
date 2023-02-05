@@ -1,17 +1,24 @@
 package views;
 
 import java.awt.Color;
+import java.awt.Dimension;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import controllers.UserListViewController;
+import utils.ComponentInit;
+
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import java.awt.Font;
+
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class UserListView extends JPanel {
 	
@@ -19,6 +26,8 @@ public class UserListView extends JPanel {
 	
 	private JTable table;
 	private JScrollPane pane;
+	private JPanel filters_panel;
+	
 	private JTextField textFieldName;
 	private JTextField textFieldEmail;
 	private JButton btnSubmitFilters;
@@ -30,64 +39,100 @@ public class UserListView extends JPanel {
 	public UserListView() {	
 		table=new JTable();
 		pane=new JScrollPane();
+		filters_panel = new JPanel();
+		filters_panel.setForeground(new Color(255, 255, 255));
+		filters_panel.setBackground(new Color(45, 45, 45));
+		
+		GroupLayout gl_filters_panel = new GroupLayout(filters_panel);
+		
+		filters_panel.setLayout(gl_filters_panel);
+		setLayout(null);
+
+		add(pane);
+		add(filters_panel);
+		
 		pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		pane.setBounds(10, 164, 706, 439);
 		
 		pane.setBackground(Color.DARK_GRAY);
-		pane.setForeground(Color.WHITE);
+		pane.setForeground(new Color(45, 45, 45));
 		
-		setLayout(null);
-		add(pane);
-		
-		
-		textFieldName = new JTextField();
-		textFieldName.setBounds(109, 84, 222, 20);
-		add(textFieldName);
-		textFieldName.setColumns(10);
+		filters_panel.setBounds(10, 11, 706, 142);
 		
 		JLabel lblTitle = new JLabel("Refinar Busqueda");
+		lblTitle.setForeground(new Color(255, 255, 255));
 		lblTitle.setFont(new Font("Roboto Black", Font.BOLD, 24));
-		lblTitle.setBounds(20, 35, 222, 38);
-		add(lblTitle);
 		
 		JLabel lblName = new JLabel("Nombre");
+		lblName.setForeground(new Color(255, 255, 255));
 		lblName.setFont(new Font("Roboto Light", Font.PLAIN, 18));
-		lblName.setBounds(30, 90, 69, 14);
-		add(lblName);
 		
 		JLabel lblEmail = new JLabel("Email");
+		lblEmail.setForeground(new Color(255, 255, 255));
 		lblEmail.setFont(new Font("Roboto Light", Font.PLAIN, 18));
-		lblEmail.setBounds(30, 128, 69, 14);
-		add(lblEmail);
+		
+		textFieldName = new JTextField();
+		textFieldName.setColumns(10);
 		
 		textFieldEmail = new JTextField();
 		textFieldEmail.setColumns(10);
-		textFieldEmail.setBounds(109, 122, 222, 20);
-		add(textFieldEmail);
 		
 		btnSubmitFilters = new JButton("Filtrar");
-		setButtonProperties(btnSubmitFilters);
+		ComponentInit.setButtonProperties(btnSubmitFilters,controller);
 		btnSubmitFilters.setActionCommand("filter");
-		btnSubmitFilters.setBounds(380, 111, 154, 31);
-		add(btnSubmitFilters);
 		
 		btnClearFilters = new JButton("Limpiar");
-		setButtonProperties(btnClearFilters);
+		ComponentInit.setButtonProperties(btnClearFilters,controller);
 		btnClearFilters.setActionCommand("clear");
-		btnClearFilters.setBounds(380, 73, 154, 31);
 		btnClearFilters.setVisible(false);
-		add(btnClearFilters);
+		
+		gl_filters_panel.setHorizontalGroup(
+			gl_filters_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_filters_panel.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblTitle)
+						.addGroup(gl_filters_panel.createSequentialGroup()
+							.addGap(10)
+							.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblName)
+								.addComponent(lblEmail))
+							.addGap(18)
+							.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING, false)
+								.addComponent(textFieldEmail)
+								.addComponent(textFieldName, GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE))
+							.addGap(47)
+							.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnClearFilters, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+								.addComponent(btnSubmitFilters, GroupLayout.PREFERRED_SIZE, 163, GroupLayout.PREFERRED_SIZE))))
+					.addContainerGap(149, Short.MAX_VALUE))
+		);
+		gl_filters_panel.setVerticalGroup(
+			gl_filters_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_filters_panel.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblTitle)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_filters_panel.createSequentialGroup()
+							.addComponent(lblName)
+							.addGap(18)
+							.addComponent(lblEmail))
+						.addGroup(gl_filters_panel.createSequentialGroup()
+							.addGroup(gl_filters_panel.createParallelGroup(Alignment.TRAILING)
+								.addGroup(gl_filters_panel.createSequentialGroup()
+									.addComponent(textFieldName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addGap(7))
+								.addGroup(gl_filters_panel.createSequentialGroup()
+									.addComponent(btnClearFilters, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)))
+							.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
+								.addComponent(textFieldEmail, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnSubmitFilters, Alignment.TRAILING))))
+					.addContainerGap(34, Short.MAX_VALUE))
+		);
 		
 		controller.buildTable();
-	}
-	
-	public void setButtonProperties(JButton button) {
-		button.setForeground(new Color(0, 0, 0));
-		button.setBackground(new Color(255, 255, 255));
-		button.setFocusable(false);
-		button.setFont(new Font("Roboto Light", Font.BOLD, 18));
-		
-		button.addActionListener(controller);
 	}
 
 	/**
@@ -173,8 +218,4 @@ public class UserListView extends JPanel {
 	public void setBtnClearFilters(JButton btnClearFilters) {
 		this.btnClearFilters = btnClearFilters;
 	}
-
-	
-
-	
 }

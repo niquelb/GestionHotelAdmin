@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import controllers.SideNavigationViewController;
+import utils.ComponentInit;
 
 public class SideNavigationView extends JPanel {
 	
@@ -25,10 +26,10 @@ public class SideNavigationView extends JPanel {
 	public SideNavigationView() {
 		setBackground(new Color(128, 128, 255));
 		
-		setButtonProperties(users_button);
-		setButtonProperties(rooms_button);
-		setButtonProperties(bookings_button);
-		setButtonProperties(log_out_button);
+		ComponentInit.setButtonProperties(users_button,controller);
+		ComponentInit.setButtonProperties(rooms_button,controller);
+		ComponentInit.setButtonProperties(bookings_button,controller);
+		ComponentInit.setButtonProperties(log_out_button,controller);
 		
 		users_button.setBounds(10, 11, 200, 40);
 		rooms_button.setBounds(10, 62, 200, 40);
@@ -47,15 +48,6 @@ public class SideNavigationView extends JPanel {
 		add(rooms_button);
 		add(bookings_button);
 		add(log_out_button);
-	}
-	
-	public void setButtonProperties(JButton button) {
-		button.setForeground(new Color(0, 0, 0));
-		button.setBackground(new Color(255, 255, 255));
-		button.setFocusable(false);
-		button.setFont(new Font("Roboto Light", Font.BOLD, 18));
-		
-		button.addActionListener(controller);
 	}
 	
 

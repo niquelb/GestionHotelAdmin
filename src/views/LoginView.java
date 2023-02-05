@@ -6,9 +6,19 @@ import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import controllers.LoginViewController;
+import utils.ComponentInit;
+import utils.title_bar.SimpleTitleBar;
+import java.awt.Color;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.intellijthemes.FlatDarkFlatIJTheme;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 /**
  * View class for the login
@@ -20,115 +30,212 @@ public class LoginView extends JFrame{
 	/**
 	 * Controller for this view
 	 */
-	private LoginViewController login_controller;
+	private LoginViewController controller;
+//	private SimpleTitleBar title_bar=new SimpleTitleBar();
+	
+	public static final int WINDOW_WIDTH=900;
+	public static final int WINDOW_HEIGHT=450;
+	private javaswingdev.GoogleMaterialIcon iconClose=new javaswingdev.GoogleMaterialIcon();
+	
+	private JPanel main_panel=new JPanel();
 
-	private JButton login_btn = new JButton("Login");
-	private JButton register_btn = new JButton("Reset");
-	private JTextField uID_field = new JTextField();
-	private JPasswordField passwd_field = new JPasswordField();
-	private JLabel uID_label = new JLabel("User ID:");
-	private JLabel passwd_label = new JLabel("Password:");
-	private JLabel msg_label = new JLabel();
+	private JButton btnSubmit;
+	private JLabel lblError;
+	private JTextField textFieldEmail;
+	private JPasswordField passwordField;
 
 	/**
 	 * Constructor, initializes and styles the window
 	 */
 	public LoginView(){
-
+		setBackground(new Color(45, 45, 45));
+		setJFrame();
 		try {
-			login_controller=new LoginViewController(this);
+			controller=new LoginViewController(this);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		uID_label.setBounds(50,100,75,25);
-		passwd_label.setBounds(50,150,75,25);	
-
-		msg_label.setBounds(125,250,250,35);
-		msg_label.setFont(new Font(null,Font.ITALIC,25));		
-
-		uID_field.setBounds(125,100,200,25);
-		passwd_field.setBounds(125,150,200,25);	
-
-		login_btn.setBounds(125,200,100,25);
-		login_btn.setFocusable(false);
-		login_btn.addActionListener(login_controller);
-		login_btn.setActionCommand("login");
-
-		register_btn.setBounds(225,200,100,25);
-		register_btn.setFocusable(false);
-//		register_btn.addActionListener(login_controller);
-//		register_btn.setActionCommand("register");
-
-		getContentPane().add(uID_label);
-		getContentPane().add(passwd_label);
-		getContentPane().add(msg_label);
-		getContentPane().add(uID_field);
-		getContentPane().add(passwd_field);
-		getContentPane().add(login_btn);
 		
-		setJFrame();
+		main_panel.setBackground(new Color(45, 45, 45));
+		main_panel.setLayout(null);
+//		title_bar.setBounds(-43, 0, main_panel.getWidth(), 29);
+		
+//		main_panel.add(title_bar);
+		
+		JPanel side_panel = new JPanel();
+		side_panel.setBackground(new Color(51, 0, 64));
+		side_panel.setBounds(0, 0, 250, WINDOW_HEIGHT);
+		main_panel.add(side_panel);
+		side_panel.setLayout(null);
+		
+		JLabel lblTempLogo = new JLabel("LOGO");
+		lblTempLogo.setBounds(77, 184, 92, 43);
+		lblTempLogo.setForeground(new Color(255, 255, 255));
+		lblTempLogo.setFont(new Font("Roboto Thin", Font.PLAIN, 36));
+		side_panel.add(lblTempLogo);
+		
+		JPanel content_panel = new JPanel();
+		content_panel.setBackground(new Color(45, 45, 45));
+		content_panel.setBounds(250, 0, 650, WINDOW_HEIGHT);
+		main_panel.add(content_panel);
+		
+		JLabel lblTitle = new JLabel("Iniciar Sesion");
+		lblTitle.setForeground(Color.WHITE);
+		lblTitle.setFont(new Font("Roboto Light", Font.PLAIN, 36));
+		
+		JLabel lblEmail = new JLabel("Email");
+		lblEmail.setForeground(Color.WHITE);
+		lblEmail.setFont(new Font("Roboto Thin", Font.PLAIN, 26));
+		
+		JLabel lblPassword = new JLabel("Contraseña");
+		lblPassword.setForeground(Color.WHITE);
+		lblPassword.setFont(new Font("Roboto Thin", Font.PLAIN, 26));
+		
+		textFieldEmail = new JTextField();
+		textFieldEmail.setColumns(10);
+		
+		passwordField = new JPasswordField();
+		
+		btnSubmit = new JButton("Iniciar Sesion");
+		btnSubmit.setActionCommand("login");
+		ComponentInit.setButtonProperties(btnSubmit, controller);
+		btnSubmit.addMouseListener(controller);
+		
+		lblError = new JLabel("ERROR AL INICIAR SESION");
+		lblError.setForeground(new Color(255, 0, 0));
+		lblError.setFont(new Font("Roboto Light", Font.PLAIN, 26));
+		lblError.setVisible(false);
+		
+		iconClose.setColor1(new java.awt.Color(111, 111, 111));
+        iconClose.setColor2(new java.awt.Color(215, 215, 215));
+        iconClose.setIcon(javaswingdev.GoogleMaterialDesignIcon.CLOSE);
+        iconClose.setSize(18);
+		
+		JLabel windowClose = new JLabel("");
+		windowClose.setIcon(iconClose.toIcon());
+		windowClose.addMouseListener(controller);
+		
+		GroupLayout gl_content_panel = new GroupLayout(content_panel);
+		gl_content_panel.setHorizontalGroup(
+			gl_content_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_content_panel.createSequentialGroup()
+					.addGroup(gl_content_panel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_content_panel.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(lblTitle))
+						.addGroup(gl_content_panel.createSequentialGroup()
+							.addGap(19)
+							.addGroup(gl_content_panel.createParallelGroup(Alignment.LEADING, false)
+								.addComponent(lblEmail)
+								.addComponent(lblPassword)
+								.addGroup(gl_content_panel.createSequentialGroup()
+									.addGap(10)
+									.addComponent(textFieldEmail, 192, 192, Short.MAX_VALUE))
+								.addGroup(gl_content_panel.createSequentialGroup()
+									.addGap(10)
+									.addComponent(passwordField)))))
+					.addGap(89)
+					.addComponent(lblError, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGap(31))
+				.addGroup(gl_content_panel.createSequentialGroup()
+					.addGap(188)
+					.addComponent(btnSubmit, GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+					.addGap(188))
+				.addGroup(Alignment.TRAILING, gl_content_panel.createSequentialGroup()
+					.addContainerGap(594, Short.MAX_VALUE)
+					.addComponent(windowClose)
+					.addContainerGap())
+		);
+		gl_content_panel.setVerticalGroup(
+			gl_content_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_content_panel.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(windowClose)
+					.addGap(5)
+					.addComponent(lblTitle, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addComponent(lblEmail, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+					.addGap(11)
+					.addComponent(textFieldEmail, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addGroup(gl_content_panel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPassword, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblError))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(passwordField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(62)
+					.addComponent(btnSubmit, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(115, Short.MAX_VALUE))
+		);
+		content_panel.setLayout(gl_content_panel);
 	}
 	
 	public void setJFrame() {
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
         setUndecorated(true);
-        setSize(450,450);
+        setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
         setResizable(false);
-        getContentPane().setLayout(null);
 		setVisible(true);
+		setContentPane(main_panel);
 	}
 	
 	/**
-	 * Method used to discard the login view when the login
-	 * is successful and switch to the main JFrame
+	 * @return the btnSubmit
 	 */
-	public void disposeWindow() {
-		this.dispose();
-		new MainView();
+	public JButton getBtnSubmit() {
+		return btnSubmit;
+	}
+
+	/**
+	 * @return the lblError
+	 */
+	public JLabel getLblError() {
+		return lblError;
+	}
+
+	/**
+	 * @return the textFieldEmail
+	 */
+	public JTextField getTextFieldEmail() {
+		return textFieldEmail;
+	}
+
+	/**
+	 * @return the passwordField
+	 */
+	public JPasswordField getPasswordField() {
+		return passwordField;
+	}
+
+	/**
+	 * @param btnSubmit the btnSubmit to set
+	 */
+	public void setBtnSubmit(JButton btnSubmit) {
+		this.btnSubmit = btnSubmit;
+	}
+
+	/**
+	 * @param lblError the lblError to set
+	 */
+	public void setLblError(JLabel lblError) {
+		this.lblError = lblError;
+	}
+
+	/**
+	 * @param textFieldEmail the textFieldEmail to set
+	 */
+	public void setTextFieldEmail(JTextField textFieldEmail) {
+		this.textFieldEmail = textFieldEmail;
+	}
+
+	/**
+	 * @param passwordField the passwordField to set
+	 */
+	public void setPasswordField(JPasswordField passwordField) {
+		this.passwordField = passwordField;
 	}
 
 	
-	public JButton getLogin_btn() {
-		return login_btn;
-	}
-
-	public void setLogin_btn(JButton login_btn) {
-		this.login_btn = login_btn;
-	}
-
-	public JButton getRegister_btn() {
-		return register_btn;
-	}
-
-	public void setRegister_btn(JButton reset_btn) {
-		this.register_btn = reset_btn;
-	}
-
-	public JTextField getuID_field() {
-		return uID_field;
-	}
-
-	public void setuID_field(JTextField uID_field) {
-		this.uID_field = uID_field;
-	}
-
-	public JPasswordField getPasswd_field() {
-		return passwd_field;
-	}
-
-	public void setPasswd_field(JPasswordField passwd_field) {
-		this.passwd_field = passwd_field;
-	}
-
-	public JLabel getMsg_label() {
-		return msg_label;
-	}
-
-	public void setMsg_label(JLabel msg_label) {
-		this.msg_label = msg_label;
-	}
-
 }

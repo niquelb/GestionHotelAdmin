@@ -127,8 +127,7 @@ public class UserModel {
 		String password=(new_user.getPassword()!=null)?new_user.getPassword():"";
 		String password_hashed=BCrypt.withDefaults().hashToString(12, password.toCharArray());
 		
-		System.out.println(password_hashed);
-		System.out.println(BCrypt.verifyer().verify(password.toCharArray(), password_hashed));
+		
 		
 	}
 
