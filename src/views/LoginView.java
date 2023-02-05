@@ -11,13 +11,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import controllers.LoginViewController;
 import utils.ComponentInit;
-import utils.title_bar.SimpleTitleBar;
 import java.awt.Color;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.intellijthemes.FlatDarkFlatIJTheme;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 /**

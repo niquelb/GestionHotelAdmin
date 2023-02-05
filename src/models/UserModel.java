@@ -4,10 +4,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.mariadb.jdbc.Connection;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import main.Main;
 import utils.BDConnector;
+import utils.UserDataChecker;
 
 /**
  * Model class for the users table
@@ -16,13 +19,24 @@ import utils.BDConnector;
  *
  */
 public class UserModel {
-	private String email,
+	private String  email,
 		password,
 		token,
 		token_valid_date,
 		name,
 		last_names,
 		phone_num;
+	
+	/**
+	 * Connection object
+	 */
+	private static Connection conn=Main.conn;
+	
+	/**
+	 * ResultSet with all of the users
+	 */
+	private static ResultSet rs=BDConnector.execStmt("SELECT * FROM users;", conn);
+	
 
 	/**
 	 * Default constructor
@@ -34,7 +48,7 @@ public class UserModel {
 	 * @param last_names user's last names
 	 * @param phone_num user's phone number
 	 */
-	public UserModel(String email, String password, String token, String token_valid_date, String name,
+	public UserModel(@NonNull String email, String password, String token, String token_valid_date, String name,
 			String last_names, String phone_num) {
 		super();
 		this.email = email;
@@ -53,9 +67,28 @@ public class UserModel {
 	 * @param last_names user's last names
 	 * @param phone_num user's phone number
 	 */
-	public UserModel(String email, String name, String last_names, String phone_num) {
+	public UserModel(@NonNull String email, String name, String last_names, String phone_num) {
 		super();
 		this.email = email;
+		this.name = name;
+		this.last_names = last_names;
+		this.phone_num = phone_num;
+	}
+	
+	/**
+	 * Constructor with password but without
+	 * token fields
+	 * @param email user's email
+	 * @param password user's password
+	 * @param name user's name
+	 * @param last_names user's last names
+	 * @param phone_num user's phone number
+	 */
+	public UserModel(@NonNull String email, String password, String name,
+			String last_names, String phone_num) {
+		super();
+		this.email = email;
+		this.password = password;
 		this.name = name;
 		this.last_names = last_names;
 		this.phone_num = phone_num;
@@ -63,74 +96,200 @@ public class UserModel {
 
 
 	/**
-	 * Method for getting an ArrayList with all users
-	 * @param conn SQL Connection object
-	 * @param params "WHERE" parameters for filtering results
-	 * @return ArrayList with all users
+	 * Method for getting an ArrayList with all users or with
+	 * specified filters
+	 * 
+	 * @param email email field for filtering
+	 * @param name name field for filtering
+	 * @return ArrayList with UserModel objects, null if error
 	 */
-	public static ArrayList<UserModel> getUserList(Connection conn, String params) {
-		String stmt=null;
-		if (params!=null && !params.equals("")) 
-			stmt="SELECT * FROM users WHERE "+params+";";
-		else 
-			stmt="SELECT * FROM users;";
-		
-		ResultSet rs=BDConnector.execStmt(stmt, conn);
+	public static ArrayList<UserModel> getUserList(String email, String name) {
 		ArrayList<UserModel> al=new ArrayList<>();
 		
-		try {
-			while (rs.next()) {
-				al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
-						rs.getString("apellidos"), rs.getString("telefono")));
+		name=(name==null)?"":name;
+		email=(email==null)?"":email;
+		
+		
+		if (email.equals("") && name.equals("")) {
+			try {
+				while (rs.next()) {
+					al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
+							rs.getString("apellidos"), rs.getString("telefono")));
+				}
+				rs.first();
+				return al;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} else if (!email.equals("")) {
+			try {
+				while (rs.next()) {
+					if (rs.getString("email").toUpperCase().contains(email.toUpperCase())) {
+						al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
+								rs.getString("apellidos"), rs.getString("telefono")));
+					}
+				}
+				rs.first();
+				return al;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		} else {
+			try {
+				while (rs.next()) {
+					if (rs.getString("nombre").toUpperCase().contains(name.toUpperCase())) {
+						al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
+								rs.getString("apellidos"), rs.getString("telefono")));
+					}
+				}
+				rs.first();
+				return al;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
 		}
 		
-		return al;
 	}
 	
 	/**
-	 * Method for getting 1 UserModel object for the DB, if
-	 * there are multiple results from the query, only the
-	 * first one is returned
-	 * @param conn SQL Connection object
-	 * @param params "WHERE" parameters for filtering results
-	 * @return UserModel object
+	 * Method for getting 1 UserModel object from the ResultSet
+	 * based on the user_id given, If it is null or empty, the
+	 * first user will be returned
+	 * @param user_id user's email
+	 * @return UserModel object, null if error
 	 */
-	public static UserModel getUser(Connection conn, String params) {
-		String stmt=null;
-		if (params==null || params.equals("")) {
-			stmt="SELECT * FROM users LIMIT 1;";
-		} else {
-			stmt="SELECT * FROM users WHERE "+params+"LIMIT 1;";
+	public static UserModel getUser(String user_id) {
+		if (user_id==null || user_id.equals("")) {
+			try {
+				rs.first();
+				return new UserModel(rs.getString("email"),rs.getString("password") , rs.getString("nombre"), rs.getString("apellidos"), rs.getString("telefono"));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}			
+			
 		}
-		ResultSet rs=BDConnector.execStmt(stmt, conn);
+		
 		try {
-			if(rs.next()) 
-				return new UserModel(rs.getString("email"), rs.getString("nombre"), rs.getString("apellidos"), rs.getString("telefono"));
-			else return null;
+			while (rs.next()) {
+				if (rs.getString("email").equals(user_id)) {
+					return new UserModel(rs.getString("email"),rs.getString("password"), rs.getString("nombre"), rs.getString("apellidos"), rs.getString("telefono"));
+				} 
+			}
+			rs.first();
+			return null;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			// TODO: handle exception
 			e.printStackTrace();
 			return null;
 		}
-		
+
 	}
 	
-	public static void updateUser(String u_id, UserModel new_user) {
-		String email=(new_user.getEmail()!=null)?new_user.getEmail():"";
+	/**
+	 * Method for creating users through the
+	 * ResultSet with a UserModel Object
+	 * !! OBJECT CANNOT HAVE NULL EMAIL FIELD !!
+	 * 
+	 * @param new_user UserModel object to be used
+	 */
+	public static void createUser(UserModel new_user) {
+		String email=new_user.getEmail();
 		String name=(new_user.getName()!=null)?new_user.getName():"";
 		String last_names=(new_user.getLast_names()!=null)?new_user.getLast_names():"";
 		String phone=(new_user.getPhone_num()!=null)?new_user.getPhone_num():"";
 		String password=(new_user.getPassword()!=null)?new_user.getPassword():"";
 		String password_hashed=BCrypt.withDefaults().hashToString(12, password.toCharArray());
 		
-		
+		try {
+			rs.moveToInsertRow();
+			
+			rs.updateString("email", email);
+			rs.updateString("nombre", name);
+			rs.updateString("apellidos", last_names);
+			rs.updateString("telefono", phone);
+			rs.updateString("password", password_hashed);
+			
+			rs.insertRow();
+			rs.first();
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 		
 	}
+	
+	/**
+	 * Method for updating existing users with a given
+	 * UserModel object
+	 * @param new_user UserModel object to be used for the updating process
+	 */
+	public static void updateUser(UserModel new_user) {
+		String email=new_user.getEmail();
+		String name=(new_user.getName()!=null)?new_user.getName():"";
+		String last_names=(new_user.getLast_names()!=null)?new_user.getLast_names():"";
+		String phone=(new_user.getPhone_num()!=null)?new_user.getPhone_num():"";
+		String password=new_user.getPassword();
 
+		if (password==null || (!UserDataChecker.validatePassword(password))) {
+			
+			try {
+				rs.first();
+				while (rs.next()) {
+					if (rs.getString("email").equals(email)) {
+						rs.updateString("nombre", name);
+						rs.updateString("apellidos", last_names);
+						rs.updateString("telefono", phone);
+						rs.updateRow();
+						rs.first();
+						
+						System.out.println("Updated without password");
+						
+						break;
+					}
+				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		} else {
+			String password_hashed=BCrypt.withDefaults().hashToString(12, password.toCharArray());
+			
+			try {
+				rs.first();
+				while (rs.next()) {
+					if (rs.getString("email").equals(email)) {
+						rs.updateString("nombre", name);
+						rs.updateString("apellidos", last_names);
+						rs.updateString("telefono", phone);
+						rs.updateString("password", password_hashed);
+						rs.updateRow();
+						rs.first();
+						
+						System.out.println("Updated");
+						
+						break;
+					}
+				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				System.err.println(e.getStackTrace());
+//				e.printStackTrace();
+			}
+			
+		}
+		
+	}
 	/**
 	 * @return the email
 	 */
@@ -227,6 +386,12 @@ public class UserModel {
 	 */
 	public void setPhone_num(String phone_num) {
 		this.phone_num = phone_num;
+	}
+
+	@Override
+	public String toString() {
+		return "UserModel [email=" + email + ", password=" + password + ", token=" + token + ", token_valid_date="
+				+ token_valid_date + ", name=" + name + ", last_names=" + last_names + ", phone_num=" + phone_num + "]";
 	}
 	
 	

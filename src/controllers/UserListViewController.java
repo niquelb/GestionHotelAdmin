@@ -30,11 +30,11 @@ public class UserListViewController implements ActionListener {
 		
 	}
 	
-	public void buildTable() {
+	public void buildTable(String email, String name) {
 		JTable table=view.getTable();
 		JScrollPane pane=view.getPane();
 		
-		ArrayList<UserModel> al=UserModel.getUserList(conn, params);
+		ArrayList<UserModel> al=UserModel.getUserList(email, name);
 		
 		DefaultTableModel model=new DefaultTableModel();
 		table.setModel(model);
@@ -81,26 +81,10 @@ public class UserListViewController implements ActionListener {
 			String name=String.valueOf(view.getTextFieldFiltersName().getText());
 			String email=String.valueOf(view.getTextFieldFiltersEmail().getText());
 			
-			if (name.equals("") && email.equals("")) {
-				buildTable();
-				break;
-			}
 			
-			if (name!=null && !name.equals("")) {
-				params="nombre LIKE \""+name+"%\"";
-				
-				if (email!=null && !email.equals("")) {
-					System.out.println(email);
-//					params.concat("AND email LIKE "+email);
-					params=params+" AND email LIKE \""+email+'"';
-				}
-				
-			} else if (email!=null && !email.equals("")) {
-				params="email LIKE \""+email+'"';
-			}
-		
+			
+			buildTable(email, name);
 			view.getBtnClearFilters().setVisible(true);
-			buildTable();
 			
 			break;
 		case "clear":
@@ -109,7 +93,7 @@ public class UserListViewController implements ActionListener {
 			view.getTextFieldFiltersName().setText("");
 			view.getTextFieldFiltersEmail().setText("");
 			
-			buildTable();
+			buildTable(null, null);
 			
 			break;
 		default:

@@ -19,6 +19,8 @@ import java.awt.Color;
 public class UserEditorView extends JFrame {
 
 	private final UserEditorViewController controller;
+
+	private javaswingdev.GoogleMaterialIcon iconClose=new javaswingdev.GoogleMaterialIcon();
 	
 	private JPanel pane;
 	private JTextField textFieldEmail;
@@ -26,6 +28,7 @@ public class UserEditorView extends JFrame {
 	private JTextField textFieldLastNames;
 	private JTextField textFieldPhone;
 	private JPasswordField passwordField;
+	private JPasswordField passwordFieldConfirm;
 	private JButton btnSubmit = new JButton("Enviar");
 
 	/**
@@ -36,7 +39,7 @@ public class UserEditorView extends JFrame {
 		pane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		
-		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setLocationByPlatform(true);
         setUndecorated(true);
         setSize(500,500);
@@ -47,10 +50,11 @@ public class UserEditorView extends JFrame {
         
         JLabel lblEmail = new JLabel("Email");
         lblEmail.setFont(new Font("Roboto Light", Font.PLAIN, 18));
-        lblEmail.setBounds(20, 60, 69, 14);
+        lblEmail.setBounds(20, 60, 69, 20);
         pane.add(lblEmail);
         
         textFieldEmail = new JTextField();
+        textFieldEmail.setEditable(false);
         textFieldEmail.setColumns(10);
         textFieldEmail.setBounds(30, 85, 440, 20);
         pane.add(textFieldEmail);
@@ -62,17 +66,17 @@ public class UserEditorView extends JFrame {
         
         JLabel lblName = new JLabel("Nombre");
         lblName.setFont(new Font("Roboto Light", Font.PLAIN, 18));
-        lblName.setBounds(20, 116, 69, 14);
+        lblName.setBounds(20, 116, 69, 20);
         pane.add(lblName);
         
         JLabel lblLastNames = new JLabel("Apellidos");
         lblLastNames.setFont(new Font("Roboto Light", Font.PLAIN, 18));
-        lblLastNames.setBounds(20, 172, 79, 14);
+        lblLastNames.setBounds(20, 172, 79, 20);
         pane.add(lblLastNames);
         
         JLabel lblPhone = new JLabel("Telefono");
         lblPhone.setFont(new Font("Roboto Light", Font.PLAIN, 18));
-        lblPhone.setBounds(20, 228, 69, 14);
+        lblPhone.setBounds(20, 228, 69, 20);
         pane.add(lblPhone);
         
         textFieldName = new JTextField();
@@ -90,9 +94,9 @@ public class UserEditorView extends JFrame {
         textFieldPhone.setBounds(30, 253, 440, 20);
         pane.add(textFieldPhone);
         
-        JLabel lblPassword = new JLabel("Contraseña");
+        JLabel lblPassword = new JLabel("Nueva Contraseña (Opcional)");
         lblPassword.setFont(new Font("Roboto Light", Font.PLAIN, 18));
-        lblPassword.setBounds(20, 284, 92, 14);
+        lblPassword.setBounds(20, 284, 232, 20);
         pane.add(lblPassword);
         
         passwordField = new JPasswordField();
@@ -100,13 +104,32 @@ public class UserEditorView extends JFrame {
         pane.add(passwordField);
         
         btnSubmit.setActionCommand("submit");
-        btnSubmit.setBounds(150, 366, 154, 31);
+        btnSubmit.setBounds(152, 415, 154, 31);
         pane.add(btnSubmit);
         setResizable(false);
 		setVisible(true);
-		
-		controller=new UserEditorViewController(this, u_id);
 
+		JLabel lblPasswordConfirm = new JLabel("Contraseña Actual (Obligatoria)");
+		lblPasswordConfirm.setFont(new Font("Roboto Light", Font.PLAIN, 18));
+		lblPasswordConfirm.setBounds(20, 340, 248, 20);
+		pane.add(lblPasswordConfirm);
+		
+		passwordFieldConfirm = new JPasswordField();
+		passwordFieldConfirm.setBounds(30, 364, 440, 20);
+		pane.add(passwordFieldConfirm);
+
+		iconClose.setColor1(new java.awt.Color(111, 111, 111));
+        iconClose.setColor2(new java.awt.Color(215, 215, 215));
+        iconClose.setIcon(javaswingdev.GoogleMaterialDesignIcon.CLOSE);
+        iconClose.setSize(18);
+		
+		JLabel lblCloseButton = new JLabel("");
+		lblCloseButton.setIcon(iconClose.toIcon());
+		lblCloseButton.setBounds(474, 11, 16, 14);
+		pane.add(lblCloseButton);
+
+		controller=new UserEditorViewController(this, u_id);
+		lblCloseButton.addMouseListener(controller);
 		ComponentInit.setButtonProperties(btnSubmit,controller);
 	}
 
@@ -143,6 +166,13 @@ public class UserEditorView extends JFrame {
 	 */
 	public JPasswordField getPasswordField() {
 		return passwordField;
+	}
+
+	/**
+	 * @return the passwordFieldConfirm
+	 */
+	public JPasswordField getPasswordFieldConfirm() {
+		return passwordFieldConfirm;
 	}
 
 	/**
@@ -188,11 +218,18 @@ public class UserEditorView extends JFrame {
 	}
 
 	/**
+	 * @param passwordFieldConfirm the passwordFieldConfirm to set
+	 */
+	public void setPasswordFieldConfirm(JPasswordField passwordFieldConfirm) {
+		this.passwordFieldConfirm = passwordFieldConfirm;
+	}
+
+	/**
 	 * @param btnSubmit the btnSubmit to set
 	 */
 	public void setBtnSubmit(JButton btnSubmit) {
 		this.btnSubmit = btnSubmit;
 	}
-	
+
 	
 }

@@ -73,7 +73,9 @@ public class BDConnector {
 		if (conn!=null) {
 			try {
 				System.out.println("Executing statement:\n"+stmt_str+"\nin BD "+BD);
-				Statement stmt=conn.createStatement();
+				Statement stmt=conn.createStatement(
+				         ResultSet.TYPE_SCROLL_INSENSITIVE,
+				         ResultSet.CONCUR_UPDATABLE);
 				rs=stmt.executeQuery(stmt_str);
 			} catch (SQLException e) {
 				System.err.println(e.getMessage());

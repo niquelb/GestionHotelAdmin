@@ -60,11 +60,13 @@ public class MainView extends JFrame {
 	}
 	
 	public void setJFrame() {
+		setTitle("Gestion Hotelera");
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
         setUndecorated(true);
         setSize(1144,802);
-//        setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        setMinimumSize(new Dimension(1000, 750));
+        setExtendedState(JFrame.MAXIMIZED_BOTH); 
 //        setResizable(false);
         setContentPane(main_panel);
 		setVisible(true);

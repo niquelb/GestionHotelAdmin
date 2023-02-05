@@ -132,7 +132,7 @@ public class UserListView extends JPanel {
 					.addContainerGap(34, Short.MAX_VALUE))
 		);
 		
-		controller.buildTable();
+		controller.buildTable(null, null);
 	}
 
 	/**
