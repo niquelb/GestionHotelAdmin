@@ -101,63 +101,53 @@ public class UserModel {
 	 * 
 	 * @param email email field for filtering
 	 * @param name name field for filtering
+	 * @param page_num page_number ! MUST START FROM 0 ! (First page is number 0, second number 1 etc.)
 	 * @return ArrayList with UserModel objects, null if error
 	 */
-	public static ArrayList<UserModel> getUserList(String email, String name) {
+	public static ArrayList<UserModel> getUserList(String email, String name, int page_num) {
 		ArrayList<UserModel> al=new ArrayList<>();
+		page_num=page_num*10+1;
 		
 		name=(name==null)?"":name;
 		email=(email==null)?"":email;
 		
-		
-		if (email.equals("") && name.equals("")) {
-			try {
-				rs.absolute(2);
-				while (rs.next()) {
+		try {
+			rs.absolute(page_num);
+			if (email.equals("") && name.equals("")) {
+				for (int i = 0; i < 10; i++) {
 					al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
 							rs.getString("apellidos"), rs.getString("telefono")));
+					
+					rs.next();
 				}
-				rs.first();
+				
 				return al;
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
-		} else if (!email.equals("")) {
-			try {
-				rs.absolute(2);
-				while (rs.next()) {
-					if (rs.getString("email").toUpperCase().contains(email.toUpperCase())) {
+			
+			} else if (!email.equals("")) {
+				for (int i = 0; i < 10; i++) {
+					if (rs.getString("email").toUpperCase().contains(email.toUpperCase()))
 						al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
 								rs.getString("apellidos"), rs.getString("telefono")));
-					}
+					
+					rs.next();
 				}
-				rs.first();
 				return al;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
-		} else {
-			try {
-				rs.absolute(2);
-				while (rs.next()) {
-					if (rs.getString("nombre").toUpperCase().contains(name.toUpperCase())) {
+			
+			} else {
+				for (int i = 0; i < 10; i++) {
+					if (rs.getString("nombre")!=null && rs.getString("nombre").toUpperCase().contains(name.toUpperCase()))
 						al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
 								rs.getString("apellidos"), rs.getString("telefono")));
-					}
+					rs.next();
 				}
-				rs.first();
 				return al;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
+			
 			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
 		}
-		
 	}
 	
 	/**
@@ -287,13 +277,29 @@ public class UserModel {
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.err.println(e.getStackTrace());
-//				e.printStackTrace();
+				e.printStackTrace();
 			}
 			
 		}
 		
 	}
+	
+	/**
+	 * Method for getting the total number
+	 * of rows in the ResultSet
+	 * @return number of rows, -1 if error
+	 */
+	public static int getTotalRows() {
+		try {
+			rs.last();
+			return rs.getRow();
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return -1;
+		}
+	}
+	
 	/**
 	 * @return the email
 	 */

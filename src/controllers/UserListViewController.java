@@ -22,8 +22,9 @@ import utils.ButtonRenderer;
 
 public class UserListViewController implements ActionListener {
 	private final UserListView view;
-	private static final Connection conn=Main.conn;
-	private String params=null;
+	private String email=null,name=null;
+	private int page_num=0;
+	private int total_pages=(int) Math.ceil(UserModel.getTotalRows()/10)-1;
 	
 	public UserListViewController(UserListView view) {
 		super();
@@ -35,7 +36,8 @@ public class UserListViewController implements ActionListener {
 		JTable table=view.getTable();
 		JScrollPane pane=view.getPane();
 		
-		ArrayList<UserModel> al=UserModel.getUserList(email, name);
+		
+		ArrayList<UserModel> al=UserModel.getUserList(email, name, page_num);
 		
 		DefaultTableModel model=new DefaultTableModel();
 		table.setModel(model);
@@ -66,6 +68,7 @@ public class UserListViewController implements ActionListener {
 		table.setPreferredSize(new Dimension(pane.getWidth()-18, pane.getHeight()));
 		
 		pane.setViewportView(table);
+		pane.setSize(pane.getWidth(), table.getRowHeight()*12);
 	}
 	
 	public static void editUser(String u_id) {
@@ -77,28 +80,69 @@ public class UserListViewController implements ActionListener {
 		
 		switch (e.getActionCommand()) {
 		case "filter": 
-			String name=String.valueOf(view.getTextFieldFiltersName().getText());
-			String email=String.valueOf(view.getTextFieldFiltersEmail().getText());
+			name=String.valueOf(view.getTextFieldName().getText());
+			email=String.valueOf(view.getTextFieldEmail().getText());
+			
+			page_num=0;
+			updatePageTextField();
 			
 			buildTable(email, name);
 			view.getBtnClearFilters().setVisible(true);
 			
 			break;
 		case "clear":
-			params=null;
+			name=null;
+			email=null;
 			view.getBtnClearFilters().setVisible(false);
-			view.getTextFieldFiltersName().setText("");
-			view.getTextFieldFiltersEmail().setText("");
+			view.getTextFieldName().setText("");
+			view.getTextFieldEmail().setText("");
+			
+			page_num=0;
+			updatePageTextField();
 			
 			buildTable(null, null);
 			
 			break;
 		case "add_user":
 			new UserCreatorView();
+			
 			break;
+			
+			/**
+			 * Page Navigation
+			 */
+		case "prev_page":
+			page_num=!(page_num==0)?--page_num:0;
+			updatePageTextField();
+			buildTable(email, name);
+			
+			break;
+		case "next_page":
+			page_num=!(page_num==total_pages)?++page_num:total_pages;
+			updatePageTextField();
+			buildTable(email, name);
+			
+			break;
+		case "first_page":
+			page_num=0;
+			updatePageTextField();
+			buildTable(email, name);
+			
+			break;
+		case "last_page":
+			page_num=total_pages;
+			updatePageTextField();
+			buildTable(email, name);
+			
+			break;
+		
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + e.getActionCommand());
 		}
 		
+	}
+	
+	public void updatePageTextField() {
+		view.getTextFieldCurrentPage().setText(String.valueOf(page_num+1));
 	}
 }

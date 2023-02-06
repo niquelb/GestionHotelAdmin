@@ -19,6 +19,7 @@ import javax.swing.JButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 
 public class UserListView extends JPanel {
 	
@@ -33,6 +34,15 @@ public class UserListView extends JPanel {
 	private JButton btnSubmitFilters;
 	private JButton btnClearFilters;
 	private JButton btnAddUser;
+	
+	/**
+	 * Page Selector
+	 */
+	private JTextField textFieldCurrentPage;
+	private JButton btnPrevPage;
+	private JButton btnFirstPage;
+	private JButton btnNextPage;
+	private JButton btnLastPage;
 	
 	/**
 	 * Create the panel.
@@ -53,7 +63,7 @@ public class UserListView extends JPanel {
 		add(filters_panel);
 		
 		pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		pane.setBounds(10, 204, 706, 495);
+		pane.setBounds(10, 254, 706, 200);
 		
 		pane.setBackground(Color.DARK_GRAY);
 		pane.setForeground(new Color(45, 45, 45));
@@ -139,6 +149,60 @@ public class UserListView extends JPanel {
 		btnAddUser.setActionCommand("add_user");
 		add(btnAddUser);
 		
+		JPanel page_selector_panel = new JPanel();
+		page_selector_panel.setBounds(10, 204, 706, 39);
+		add(page_selector_panel);
+		
+		textFieldCurrentPage = new JTextField();
+		textFieldCurrentPage.setEditable(false);
+		textFieldCurrentPage.setHorizontalAlignment(SwingConstants.CENTER);
+		textFieldCurrentPage.setColumns(10);
+		textFieldCurrentPage.setText(String.valueOf(1));
+		
+		btnPrevPage = new JButton("<");
+		btnFirstPage = new JButton("<<");
+		btnNextPage = new JButton(">");
+		btnLastPage = new JButton(">>");
+		
+		ComponentInit.setButtonProperties(btnPrevPage, controller);
+		btnPrevPage.setActionCommand("prev_page");
+		ComponentInit.setButtonProperties(btnFirstPage, controller);
+		btnFirstPage.setActionCommand("first_page");
+		ComponentInit.setButtonProperties(btnNextPage, controller);
+		btnNextPage.setActionCommand("next_page");
+		ComponentInit.setButtonProperties(btnLastPage, controller);
+		btnLastPage.setActionCommand("last_page");
+		
+		GroupLayout gl_page_selector_panel = new GroupLayout(page_selector_panel);
+		gl_page_selector_panel.setHorizontalGroup(
+			gl_page_selector_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_page_selector_panel.createSequentialGroup()
+					.addGap(204)
+					.addComponent(btnFirstPage)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnPrevPage, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(textFieldCurrentPage, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnNextPage, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnLastPage, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(204, Short.MAX_VALUE))
+		);
+		gl_page_selector_panel.setVerticalGroup(
+			gl_page_selector_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_page_selector_panel.createSequentialGroup()
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGroup(gl_page_selector_panel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(textFieldCurrentPage, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnPrevPage)
+						.addComponent(btnFirstPage)
+						.addComponent(btnNextPage)
+						.addComponent(btnLastPage))
+					.addGap(8))
+		);
+		page_selector_panel.setLayout(gl_page_selector_panel);
+		
 		controller.buildTable(null, null);
 	}
 
@@ -157,16 +221,16 @@ public class UserListView extends JPanel {
 	}
 
 	/**
-	 * @return the textFieldFiltersName
+	 * @return the textFieldName
 	 */
-	public JTextField getTextFieldFiltersName() {
+	public JTextField getTextFieldName() {
 		return textFieldName;
 	}
 
 	/**
-	 * @return the textFieldFiltersEmail
+	 * @return the textFieldEmail
 	 */
-	public JTextField getTextFieldFiltersEmail() {
+	public JTextField getTextFieldEmail() {
 		return textFieldEmail;
 	}
 
@@ -185,6 +249,20 @@ public class UserListView extends JPanel {
 	}
 
 	/**
+	 * @return the btnAddUser
+	 */
+	public JButton getBtnAddUser() {
+		return btnAddUser;
+	}
+
+	/**
+	 * @return the textFieldCurrentPage
+	 */
+	public JTextField getTextFieldCurrentPage() {
+		return textFieldCurrentPage;
+	}
+
+	/**
 	 * @param table the table to set
 	 */
 	public void setTable(JTable table) {
@@ -199,17 +277,17 @@ public class UserListView extends JPanel {
 	}
 
 	/**
-	 * @param textFieldFiltersName the textFieldFiltersName to set
+	 * @param textFieldName the textFieldName to set
 	 */
-	public void setTextFieldFiltersName(JTextField textFieldFiltersName) {
-		this.textFieldName = textFieldFiltersName;
+	public void setTextFieldName(JTextField textFieldName) {
+		this.textFieldName = textFieldName;
 	}
 
 	/**
-	 * @param textFieldFiltersEmail the textFieldFiltersEmail to set
+	 * @param textFieldEmail the textFieldEmail to set
 	 */
-	public void setTextFieldFiltersEmail(JTextField textFieldFiltersEmail) {
-		this.textFieldEmail = textFieldFiltersEmail;
+	public void setTextFieldEmail(JTextField textFieldEmail) {
+		this.textFieldEmail = textFieldEmail;
 	}
 
 	/**
@@ -225,4 +303,20 @@ public class UserListView extends JPanel {
 	public void setBtnClearFilters(JButton btnClearFilters) {
 		this.btnClearFilters = btnClearFilters;
 	}
+
+	/**
+	 * @param btnAddUser the btnAddUser to set
+	 */
+	public void setBtnAddUser(JButton btnAddUser) {
+		this.btnAddUser = btnAddUser;
+	}
+
+	/**
+	 * @param textFieldCurrentPage the textFieldCurrentPage to set
+	 */
+	public void setTextFieldCurrentPage(JTextField textFieldCurrentPage) {
+		this.textFieldCurrentPage = textFieldCurrentPage;
+	}
+
+	
 }
