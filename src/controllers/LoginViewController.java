@@ -95,17 +95,17 @@ public class LoginViewController implements ActionListener, MouseListener{
 		
 		CONNECTION.setRequestMethod("POST");
 		
-//		String password_hashed=BCrypt.withDefaults().hashToString(12, password.toCharArray());
-		String password_hashed="$2a$12$tlOgATQKDOjgh.OLtfhZP.4K7bADlGC78CdFANhEQYHVADJhRHJve";
 		
-//		System.out.println(password);
-//		System.out.println(password_hashed);
+		//TODO Implement BCrypt
+//		String password_hashed=BCrypt.withDefaults().hashToString(12, password.toCharArray());
+//		String password_hashed="$2a$12$tlOgATQKDOjgh.OLtfhZP.4K7bADlGC78CdFANhEQYHVADJhRHJve";
+
 		
 //		System.out.println(BCrypt.verifyer().verify(password.toCharArray(), "$2a$12$tlOgATQKDOjgh.OLtfhZP.4K7bADlGC78CdFANhEQYHVADJhRHJve").verified);
 
 		Map<String, String> parameters = new HashMap<>();
 		parameters.put("action", "login");
-		parameters.put("user", "{\"email\":\""+user_id+"\", \"password\":\""+password_hashed+"\"}");
+		parameters.put("user", "{\"email\":\""+user_id+"\", \"password\":\""+password+"\"}");
 
 		CONNECTION.setDoOutput(true);
 		DataOutputStream out = new DataOutputStream(CONNECTION.getOutputStream());

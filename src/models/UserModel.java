@@ -196,11 +196,17 @@ public class UserModel {
 	 */
 	public static void createUser(UserModel new_user) {
 		String email=new_user.getEmail();
+		
+		if (email==null||email.equals("")) {
+			throw new IllegalArgumentException("Email cannot be null");
+		}
+		
 		String name=(new_user.getName()!=null)?new_user.getName():"";
 		String last_names=(new_user.getLast_names()!=null)?new_user.getLast_names():"";
 		String phone=(new_user.getPhone_num()!=null)?new_user.getPhone_num():"";
 		String password=(new_user.getPassword()!=null)?new_user.getPassword():"";
-		String password_hashed=BCrypt.withDefaults().hashToString(12, password.toCharArray());
+		//TODO Implement BCrypt
+//		String password_hashed=BCrypt.withDefaults().hashToString(12, password.toCharArray());
 		
 		try {
 			rs.moveToInsertRow();
@@ -209,7 +215,7 @@ public class UserModel {
 			rs.updateString("nombre", name);
 			rs.updateString("apellidos", last_names);
 			rs.updateString("telefono", phone);
-			rs.updateString("password", password_hashed);
+			rs.updateString("password", password);
 			
 			rs.insertRow();
 			
