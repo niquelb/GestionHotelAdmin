@@ -171,6 +171,7 @@ public class UserModel {
 		}
 		
 		try {
+			rs.beforeFirst();
 			while (rs.next()) {
 				if (rs.getString("email").equals(user_id)) {
 					return new UserModel(rs.getString("email"),rs.getString("password"), rs.getString("nombre"), rs.getString("apellidos"), rs.getString("telefono"));

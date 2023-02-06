@@ -10,9 +10,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import org.mariadb.jdbc.Connection;
-
-import main.Main;
 import models.UserModel;
 import views.UserListView;
 import views.UserCreatorView;

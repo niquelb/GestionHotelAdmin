@@ -20,6 +20,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import utils.ParameterStringBuilder;
 import views.LoginView;
 import views.MainView;
@@ -67,7 +68,7 @@ public class LoginViewController implements ActionListener, MouseListener{
 			try {
 				if(login(user_id,password)) {
 					view.dispose();
-					new MainView();
+					new MainView(user_id);
 					
 				} else {
 					view.getLblError().setVisible(true);;
@@ -93,10 +94,18 @@ public class LoginViewController implements ActionListener, MouseListener{
 	public boolean login(String user_id, String password) throws IOException {
 		
 		CONNECTION.setRequestMethod("POST");
+		
+//		String password_hashed=BCrypt.withDefaults().hashToString(12, password.toCharArray());
+		String password_hashed="$2a$12$tlOgATQKDOjgh.OLtfhZP.4K7bADlGC78CdFANhEQYHVADJhRHJve";
+		
+//		System.out.println(password);
+//		System.out.println(password_hashed);
+		
+//		System.out.println(BCrypt.verifyer().verify(password.toCharArray(), "$2a$12$tlOgATQKDOjgh.OLtfhZP.4K7bADlGC78CdFANhEQYHVADJhRHJve").verified);
 
 		Map<String, String> parameters = new HashMap<>();
 		parameters.put("action", "login");
-		parameters.put("user", "{\"email\":\""+user_id+"\", \"password\":\""+password+"\"}");
+		parameters.put("user", "{\"email\":\""+user_id+"\", \"password\":\""+password_hashed+"\"}");
 
 		CONNECTION.setDoOutput(true);
 		DataOutputStream out = new DataOutputStream(CONNECTION.getOutputStream());
