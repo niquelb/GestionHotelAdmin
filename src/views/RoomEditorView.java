@@ -1,27 +1,27 @@
 package views;
 
 import java.awt.Color;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
-
-import controllers.RoomCreatorViewController;
-import utils.ComponentInit;
+import java.awt.EventQueue;
+import java.awt.Font;
 
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.LineBorder;
 
-public class RoomCreatorView extends JFrame {
-	
-	private final RoomCreatorViewController controller;
+import controllers.RoomEditorViewController;
+import utils.ComponentInit;
+
+public class RoomEditorView extends JFrame {
+
+	private final RoomEditorViewController controller;
 	
 	private javaswingdev.GoogleMaterialIcon iconClose=new javaswingdev.GoogleMaterialIcon();
 
@@ -36,8 +36,8 @@ public class RoomCreatorView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public RoomCreatorView() {
-		setTitle("Crear Habitacion");
+	public RoomEditorView(String r_id) {
+		setTitle("Editar Habitacion");
 		pane = new JPanel();
 		pane.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
 		
@@ -49,11 +49,10 @@ public class RoomCreatorView extends JFrame {
         setVisible(true);
         setSize(500,500);
 
-		
 
 		setContentPane(pane);
 		
-		JLabel lblTitle = new JLabel("Crear Usuario");
+		JLabel lblTitle = new JLabel("Editar Usuario");
 		lblTitle.setFont(new Font("Roboto Black", Font.BOLD, 24));
 		
 		iconClose.setColor1(new java.awt.Color(111, 111, 111));
@@ -120,8 +119,8 @@ public class RoomCreatorView extends JFrame {
 						.addGroup(gl_pane.createSequentialGroup()
 							.addGroup(gl_pane.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_pane.createSequentialGroup()
-									.addComponent(lblTitle, GroupLayout.PREFERRED_SIZE, 159, GroupLayout.PREFERRED_SIZE)
-									.addGap(302)
+									.addComponent(lblTitle)
+									.addGap(297)
 									.addComponent(lblCloseBtn, GroupLayout.PREFERRED_SIZE, 15, GroupLayout.PREFERRED_SIZE))
 								.addGroup(gl_pane.createSequentialGroup()
 									.addGap(10)
@@ -193,7 +192,7 @@ public class RoomCreatorView extends JFrame {
 		);
 		pane.setLayout(gl_pane);
 		
-		controller=new RoomCreatorViewController(this);
+		controller=new RoomEditorViewController(this, r_id);
 		
 		lblCloseBtn.addMouseListener(controller);
 		btnSubmit.setActionCommand("submit");
@@ -285,4 +284,5 @@ public class RoomCreatorView extends JFrame {
 	}
 	
 	
+
 }

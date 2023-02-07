@@ -192,7 +192,7 @@ public class UserModel {
 	 * ResultSet with a UserModel Object
 	 * !! OBJECT CANNOT HAVE NULL EMAIL FIELD !!
 	 * 
-	 * @param new_user UserModel object to be used
+	 * @param new_user UserModel object
 	 */
 	public static void createUser(UserModel new_user) {
 		String email=new_user.getEmail();
@@ -219,7 +219,7 @@ public class UserModel {
 			
 			rs.insertRow();
 			
-			rs=BDConnector.execStmt("SELECT * FROM users;", conn);
+//			rs=BDConnector.execStmt("SELECT * FROM users;", conn);
 		} catch (SQLException e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -242,14 +242,14 @@ public class UserModel {
 		if (password==null || (!UserDataChecker.validatePassword(password))) {
 			
 			try {
-				rs.first();
+				rs.beforeFirst();
 				while (rs.next()) {
 					if (rs.getString("email").equals(email)) {
 						rs.updateString("nombre", name);
 						rs.updateString("apellidos", last_names);
 						rs.updateString("telefono", phone);
+						
 						rs.updateRow();
-						rs.first();
 						
 						System.out.println("Updated without password");
 						

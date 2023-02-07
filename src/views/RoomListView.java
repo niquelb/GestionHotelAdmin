@@ -18,6 +18,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 
 public class RoomListView extends JPanel {
 	
@@ -31,6 +32,15 @@ public class RoomListView extends JPanel {
 	private JTable table=new JTable();
 	private JScrollPane pane;
 
+	/**
+	 * Page Selector
+	 */
+	private JTextField textFieldCurrentPage;
+	private JButton btnPrevPage;
+	private JButton btnFirstPage;
+	private JButton btnNextPage;
+	private JButton btnLastPage;
+	
 	/**
 	 * Create the panel.
 	 */
@@ -142,10 +152,33 @@ public class RoomListView extends JPanel {
 		list_panel.add(pane, BorderLayout.CENTER);
 		pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
-		JPanel bottom_panel = new JPanel();
-		bottom_panel.setBackground(new Color(45, 45, 45));
-		bottom_panel.setPreferredSize(new Dimension(list_panel.getWidth(), 100));
-		list_panel.add(bottom_panel, BorderLayout.SOUTH);
+		JPanel bottom_navi = new JPanel();
+		bottom_navi.setBackground(new Color(45, 45, 45));
+		bottom_navi.setPreferredSize(new Dimension(list_panel.getWidth(), 100));
+		list_panel.add(bottom_navi, BorderLayout.SOUTH);
+		
+		btnFirstPage = new JButton("<<");
+		btnFirstPage.setActionCommand("first_page");
+		bottom_navi.add(btnFirstPage);
+		
+		btnPrevPage = new JButton("<");
+		btnPrevPage.setActionCommand("prev_page");
+		bottom_navi.add(btnPrevPage);
+		
+		textFieldCurrentPage = new JTextField();
+		textFieldCurrentPage.setText("1");
+		textFieldCurrentPage.setHorizontalAlignment(SwingConstants.CENTER);
+		textFieldCurrentPage.setEditable(false);
+		textFieldCurrentPage.setColumns(10);
+		bottom_navi.add(textFieldCurrentPage);
+		
+		btnNextPage = new JButton(">");
+		btnNextPage.setActionCommand("next_page");
+		bottom_navi.add(btnNextPage);
+		
+		btnLastPage = new JButton(">>");
+		btnLastPage.setActionCommand("last_page");
+		bottom_navi.add(btnLastPage);
 		
 		JPanel top_panel = new JPanel();
 		top_panel.setBackground(new Color(45, 45, 45));
@@ -164,6 +197,98 @@ public class RoomListView extends JPanel {
 		ComponentInit.setButtonProperties(btnCreate_room, controller);
 		btnCreate_room.setActionCommand("create_room");
 	}
+	
+	
+
+	/**
+	 * @return the textFieldCurrentPage
+	 */
+	public JTextField getTextFieldCurrentPage() {
+		return textFieldCurrentPage;
+	}
+
+
+
+	/**
+	 * @return the btnPrevPage
+	 */
+	public JButton getBtnPrevPage() {
+		return btnPrevPage;
+	}
+
+
+
+	/**
+	 * @return the btnFirstPage
+	 */
+	public JButton getBtnFirstPage() {
+		return btnFirstPage;
+	}
+
+
+
+	/**
+	 * @return the btnNextPage
+	 */
+	public JButton getBtnNextPage() {
+		return btnNextPage;
+	}
+
+
+
+	/**
+	 * @return the btnLastPage
+	 */
+	public JButton getBtnLastPage() {
+		return btnLastPage;
+	}
+
+
+
+	/**
+	 * @param textFieldCurrentPage the textFieldCurrentPage to set
+	 */
+	public void setTextFieldCurrentPage(JTextField textFieldCurrentPage) {
+		this.textFieldCurrentPage = textFieldCurrentPage;
+	}
+
+
+
+	/**
+	 * @param btnPrevPage the btnPrevPage to set
+	 */
+	public void setBtnPrevPage(JButton btnPrevPage) {
+		this.btnPrevPage = btnPrevPage;
+	}
+
+
+
+	/**
+	 * @param btnFirstPage the btnFirstPage to set
+	 */
+	public void setBtnFirstPage(JButton btnFirstPage) {
+		this.btnFirstPage = btnFirstPage;
+	}
+
+
+
+	/**
+	 * @param btnNextPage the btnNextPage to set
+	 */
+	public void setBtnNextPage(JButton btnNextPage) {
+		this.btnNextPage = btnNextPage;
+	}
+
+
+
+	/**
+	 * @param btnLastPage the btnLastPage to set
+	 */
+	public void setBtnLastPage(JButton btnLastPage) {
+		this.btnLastPage = btnLastPage;
+	}
+
+
 
 	/**
 	 * @return the btnClear

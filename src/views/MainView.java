@@ -31,7 +31,6 @@ public class MainView extends JFrame {
 	private final JPanel main_panel=new JPanel();
 	private final JPanel center_panel=new JPanel();
 	private final JPanel navi_panel=new JPanel();
-	private final JPanel bottom_panel = new JPanel();
 	private final JPanel side_panel = new JPanel();
 	
 	private final SimpleTitleBar title_bar=new SimpleTitleBar();
@@ -42,7 +41,6 @@ public class MainView extends JFrame {
 	private final JButton btnRooms = new JButton("HABITACIONES");
 	private final JButton btnBookings = new JButton("RESERVAS");
 	private final JButton btnLog_out = new JButton("CERRAR SESION");
-	private final JLabel lblCopyright = new JLabel("Copyright © Nicolas Palaoro 2023");
 
 	/**
 	 * Constructor for the view
@@ -63,18 +61,10 @@ public class MainView extends JFrame {
 		main_panel.add(navi_panel, BorderLayout.WEST);
 		center_panel.setBackground(new Color(45, 45, 45));
 		main_panel.add(center_panel, BorderLayout.CENTER);
-		bottom_panel.setBackground(new Color(45, 45, 45));
-		main_panel.add(bottom_panel, BorderLayout.SOUTH);
 		side_panel.setBackground(new Color(45, 45, 45));
 		main_panel.add(side_panel, BorderLayout.EAST);
 		
 		side_panel.setPreferredSize(new Dimension(75, main_panel.getHeight()));
-		bottom_panel.setPreferredSize(new Dimension(main_panel.getWidth(), 75));
-		lblCopyright.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCopyright.setForeground(Color.WHITE);
-		lblCopyright.setFont(new Font("Roboto Light", Font.PLAIN, 18));
-		
-		bottom_panel.add(lblCopyright);
 		
 		center_panel.setPreferredSize(getMinimumSize());
 		navi_panel.setPreferredSize(new Dimension(220, main_panel.getHeight()));

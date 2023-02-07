@@ -203,6 +203,12 @@ public class RoomModel {
 
 	}
 	
+	/**
+	 * Method for creating a room through the
+	 * ResultSet using a RoomModel object
+	 * !! OBJECT CANNOT HAVE NULL NAME !!
+	 * @param new_room RoomModel object
+	 */
 	public static void createRoom(RoomModel new_room) {
 		String name=(new_room.getName().equals(""))?null:new_room.getName();
 		if (name==null) {
@@ -226,7 +232,49 @@ public class RoomModel {
 			rs.updateInt("numero_camas", num_beds);
 			
 			rs.insertRow();
-			rs=BDConnector.execStmt("SELECT * FROM habitaciones;", conn);
+//			rs=BDConnector.execStmt("SELECT * FROM habitaciones;", conn);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Method for updating existing rooms through the ResultSet
+	 * using a RoomModel object
+	 * !! OBJECT CANNOT HAVE NULL NAME !!
+	 * @param new_room RoomModel object
+	 */
+	public static void updateRoom(RoomModel new_room) {
+		String name=(new_room.getName().equals(""))?null:new_room.getName();
+		if (name==null) {
+			throw new IllegalArgumentException("Name cannot be null");
+		}
+		
+		String description=new_room.getDescription();
+		int quantity=new_room.getQuantity();
+		double price=new_room.getPrice();
+		int max_guests=new_room.getMax_guests();
+		int num_beds=new_room.getNum_beds();
+		
+		try {
+			rs.beforeFirst();
+			while (rs.next()) {
+				if (rs.getString("nombre").equals(name)) {
+					rs.updateString("nombre", name);
+					rs.updateString("descripcion", description);
+					rs.updateInt("cantidad", quantity);
+					rs.updateDouble("precio", price);
+					rs.updateInt("numero_maximo_personas", max_guests);
+					rs.updateInt("numero_camas", num_beds);
+					
+					rs.updateRow();
+					
+					System.out.println("Updated successfully");
+					
+					break;
+				}
+			}
 		} catch (SQLException e) {
 			// TODO: handle exception
 			e.printStackTrace();

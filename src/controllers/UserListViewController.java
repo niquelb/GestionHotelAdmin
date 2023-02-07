@@ -66,10 +66,6 @@ public class UserListViewController implements ActionListener {
 		pane.setViewportView(table);
 		pane.setSize(pane.getWidth(), table.getRowHeight()*12);
 	}
-	
-	public static void editUser(String u_id) {
-		new UserEditorView(u_id);
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -104,9 +100,9 @@ public class UserListViewController implements ActionListener {
 			
 			break;
 			
-			/**
-			 * Page Navigation
-			 */
+		/**
+		 * Page Navigation
+		 */
 		case "prev_page":
 			page_num=!(page_num==0)?--page_num:0;
 			updatePageTextField();
@@ -140,5 +136,9 @@ public class UserListViewController implements ActionListener {
 	
 	public void updatePageTextField() {
 		view.getTextFieldCurrentPage().setText(String.valueOf(page_num+1));
+	}
+	
+	public static void updateUser(String u_id) {
+		new UserEditorView(u_id);
 	}
 }

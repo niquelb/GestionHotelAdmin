@@ -9,12 +9,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import main.Main;
 import models.UserModel;
 import utils.UserDataChecker;
 import views.UserEditorView;
@@ -62,12 +57,21 @@ public class UserEditorViewController implements ActionListener, MouseListener {
 				break;
 			}
 			
-			if (!BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified) {
+//			if (!BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified) {
+//				JOptionPane.showMessageDialog(view,
+//					    "La contraseña es incorrecta.",
+//					    "Error",
+//					    JOptionPane.PLAIN_MESSAGE);
+//				break;
+//			}
+			
+			if (!password.equals(user.getPassword())) {
 				JOptionPane.showMessageDialog(view,
 					    "La contraseña es incorrecta.",
 					    "Error",
 					    JOptionPane.PLAIN_MESSAGE);
 				break;
+//			}
 			}
 			
 			if (!password_new.equals("")) {

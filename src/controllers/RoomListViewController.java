@@ -14,6 +14,7 @@ import models.RoomModel;
 import utils.ButtonEditor;
 import utils.ButtonRenderer;
 import views.RoomCreatorView;
+import views.RoomEditorView;
 import views.RoomListView;
 
 public class RoomListViewController implements ActionListener {
@@ -56,7 +57,7 @@ public class RoomListViewController implements ActionListener {
 		model.addColumn("Num. Camas");
 		model.addColumn("Modificar");
 		
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+//		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); <- this is the devil
 		table.getTableHeader().setReorderingAllowed(false);
 		
 		for (RoomModel roomModel : al) {
@@ -126,9 +127,45 @@ public class RoomListViewController implements ActionListener {
 		case "create_room":
 			new RoomCreatorView();
 			break;
+		
+		/**
+		 * Page Navigation
+		 */
+		case "prev_page":
+			page_num=!(page_num==0)?--page_num:0;
+			updatePageTextField();
+			buildTable(name, price, num_guests);
+			
+			break;
+		case "next_page":
+			page_num=!(page_num==total_pages)?++page_num:total_pages;
+			updatePageTextField();
+			buildTable(name, price, num_guests);
+			
+			break;
+		case "first_page":
+			page_num=0;
+			updatePageTextField();
+			buildTable(name, price, num_guests);
+			
+			break;
+		case "last_page":
+			page_num=total_pages;
+			updatePageTextField();
+			buildTable(name, price, num_guests);
+				
+				break;
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + e.getActionCommand());
 		}
+	}
+	
+	public void updatePageTextField() {
+		view.getTextFieldCurrentPage().setText(String.valueOf(page_num+1));
+	}
+	
+	public static void updateRoom(String r_id) {
+		new RoomEditorView(r_id);
 	}
 
 }
