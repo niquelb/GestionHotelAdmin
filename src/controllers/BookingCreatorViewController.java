@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import models.BookingModel;
 import utils.UserDataChecker;
 import views.BookingCreatorView;
+import views.BookingRoomCreatorView;
 
 public class BookingCreatorViewController implements ActionListener, MouseListener{
 	
@@ -24,6 +25,7 @@ public class BookingCreatorViewController implements ActionListener, MouseListen
 	public BookingCreatorViewController(BookingCreatorView view) {
 		super();
 		this.view = view;
+		
 	}
 
 	@Override
@@ -102,6 +104,9 @@ public class BookingCreatorViewController implements ActionListener, MouseListen
 			
 			try {
 				BookingModel.createBooking(new BookingModel(num_adults, num_children, start_date, end_date, user_id));
+				BookingModel bm=BookingModel.getBooking(user_id, start_date);
+				
+				new BookingRoomCreatorView(bm.getId());
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			} finally {

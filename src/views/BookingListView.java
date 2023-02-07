@@ -32,7 +32,7 @@ public class BookingListView extends JPanel {
 	private JTextField textFieldCurrentPage;
 	private JButton btnClear;
 	
-	private JTable table;
+	private JTable table=new JTable();
 	private JScrollPane pane;
 	
 	//TODO page selector
@@ -197,5 +197,105 @@ public class BookingListView extends JPanel {
 		ComponentInit.setButtonProperties(btnCreate_booking, controller);
 
 	}
+
+	/**
+	 * @return the textFieldUser_id
+	 */
+	public JTextField getTextFieldUser_id() {
+		return textFieldUser_id;
+	}
+
+	/**
+	 * @return the textFieldStart_date
+	 */
+	public JTextField getTextFieldStart_date() {
+		return textFieldStart_date;
+	}
+
+	/**
+	 * @return the textFieldEnd_date
+	 */
+	public JTextField getTextFieldEnd_date() {
+		return textFieldEnd_date;
+	}
+
+	/**
+	 * @return the textFieldCurrentPage
+	 */
+	public JTextField getTextFieldCurrentPage() {
+		return textFieldCurrentPage;
+	}
+
+	/**
+	 * @return the btnClear
+	 */
+	public JButton getBtnClear() {
+		return btnClear;
+	}
+
+	/**
+	 * @return the table
+	 */
+	public JTable getTable() {
+		return table;
+	}
+
+	/**
+	 * @return the pane
+	 */
+	public JScrollPane getPane() {
+		return pane;
+	}
+
+	/**
+	 * @param textFieldUser_id the textFieldUser_id to set
+	 */
+	public void setTextFieldUser_id(JTextField textFieldUser_id) {
+		this.textFieldUser_id = textFieldUser_id;
+	}
+
+	/**
+	 * @param textFieldStart_date the textFieldStart_date to set
+	 */
+	public void setTextFieldStart_date(JTextField textFieldStart_date) {
+		this.textFieldStart_date = textFieldStart_date;
+	}
+
+	/**
+	 * @param textFieldEnd_date the textFieldEnd_date to set
+	 */
+	public void setTextFieldEnd_date(JTextField textFieldEnd_date) {
+		this.textFieldEnd_date = textFieldEnd_date;
+	}
+
+	/**
+	 * @param textFieldCurrentPage the textFieldCurrentPage to set
+	 */
+	public void setTextFieldCurrentPage(JTextField textFieldCurrentPage) {
+		this.textFieldCurrentPage = textFieldCurrentPage;
+	}
+
+	/**
+	 * @param btnClear the btnClear to set
+	 */
+	public void setBtnClear(JButton btnClear) {
+		this.btnClear = btnClear;
+	}
+
+	/**
+	 * @param table the table to set
+	 */
+	public void setTable(JTable table) {
+		this.table = table;
+	}
+
+	/**
+	 * @param pane the pane to set
+	 */
+	public void setPane(JScrollPane pane) {
+		this.pane = pane;
+	}
+	
+	
 
 }

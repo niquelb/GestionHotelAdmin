@@ -55,13 +55,12 @@ public class RoomListViewController implements ActionListener {
 		model.addColumn("Precio");
 		model.addColumn("Max. Personas");
 		model.addColumn("Num. Camas");
-		model.addColumn("Modificar");
 		
 //		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); <- this is the devil
 		table.getTableHeader().setReorderingAllowed(false);
 		
 		for (RoomModel roomModel : al) {
-			Object[] row=new Object[8];
+			Object[] row=new Object[7];
 			row[0]=roomModel.getId();
 			row[1]=roomModel.getName();
 			row[2]=roomModel.getDescription();
@@ -69,13 +68,9 @@ public class RoomListViewController implements ActionListener {
 			row[4]=roomModel.getPrice();
 			row[5]=roomModel.getMax_guests();
 			row[6]=roomModel.getNum_beds();
-			row[7]="Editar";
 			model.addRow(row);
 			
 		}
-		
-		table.getColumn("Modificar").setCellRenderer(new ButtonRenderer());
-		table.getColumn("Modificar").setCellEditor(new ButtonEditor(new JCheckBox(), table, null, al));
 				
 		pane.setViewportView(table);
 		

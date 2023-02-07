@@ -3,6 +3,7 @@ import org.mariadb.jdbc.Connection;
 
 import models.UserModel;
 import utils.BDConnector;
+import views.BookingRoomCreatorView;
 import views.LoginView;
 import views.MainView;
 
@@ -12,5 +13,6 @@ public class Main {
 	public static void main(String[] args) {
 //		new LoginView();
 		new MainView("j@j.com");
+//		new BookingRoomCreatorView(8);
 	}
 }

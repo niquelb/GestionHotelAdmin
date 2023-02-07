@@ -117,7 +117,7 @@ public class RoomModel {
 			rs.absolute(page_num);
 			if (name.equals("")&&price>=MAX_PRICE&&num_guests>=MAX_GUESTS) {
 				for (int i = 0; i < rows_per_page; i++) {
-					al.add(new RoomModel(rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
+					al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
 							rs.getInt("numero_camas"), rs.getDouble("precio"),
 							rs.getString("nombre"), rs.getString("descripcion")));
 					
@@ -128,7 +128,7 @@ public class RoomModel {
 			} else if (!name.equals("")) {
 				for (int i = 0; i < rows_per_page; i++) {
 					if (rs.getString("nombre")!=null && rs.getString("nombre").toUpperCase().contains(name.toUpperCase()))
-						al.add(new RoomModel(rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
+						al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
 								rs.getInt("numero_camas"), rs.getDouble("precio"),
 								rs.getString("nombre"), rs.getString("descripcion")));
 					rs.next();
@@ -140,7 +140,7 @@ public class RoomModel {
 							(rs.getInt("precio")<=price) &&
 							(rs.getInt("numero_maximo_personas")>=num_guests)
 							)
-						al.add(new RoomModel(rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
+						al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
 								rs.getInt("numero_camas"), rs.getDouble("precio"),
 								rs.getString("nombre"), rs.getString("descripcion")));
 					rs.next();
@@ -149,7 +149,7 @@ public class RoomModel {
 			} else if (price<MAX_PRICE) {
 				for (int i = 0; i < rows_per_page; i++) {
 					if (rs.getInt("precio")<=price)
-						al.add(new RoomModel(rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
+						al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
 								rs.getInt("numero_camas"), rs.getDouble("precio"),
 								rs.getString("nombre"), rs.getString("descripcion")));
 					rs.next();
@@ -158,7 +158,7 @@ public class RoomModel {
 			} else {
 				for (int i = 0; i < rows_per_page; i++) {
 					if (rs.getInt("numero_maximo_personas")>=num_guests)	
-						al.add(new RoomModel(rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
+						al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
 								rs.getInt("numero_camas"), rs.getDouble("precio"),
 								rs.getString("nombre"), rs.getString("descripcion")));
 					rs.next();
@@ -184,19 +184,55 @@ public class RoomModel {
 		try  {
 			if (room_id==null || room_id.equals("")) {
 				rs.first();
-				return new RoomModel(
-						rs.getInt("cantidad"),rs.getInt("numero_maximo_personas"),
-						rs.getInt("numero_camas"),rs.getDouble("precio"),
-						rs.getString("nombre"),rs.getString("descripcion"));
+				return new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
+						rs.getInt("numero_camas"), rs.getDouble("precio"),
+						rs.getString("nombre"), rs.getString("descripcion"));
 			}
 			
 			rs.beforeFirst();
 			while (rs.next()) {
 				if (rs.getString("nombre").toUpperCase().equals(room_id.toUpperCase())) {
-					return new RoomModel(
-							rs.getInt("cantidad"),rs.getInt("numero_maximo_personas"),
-							rs.getInt("numero_camas"),rs.getDouble("precio"),
-							rs.getString("nombre"),rs.getString("descripcion"));
+					return new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
+							rs.getInt("numero_camas"), rs.getDouble("precio"),
+							rs.getString("nombre"), rs.getString("descripcion"));
+				}
+			}
+			
+			return null;
+		
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+	
+	/**
+	 * Method for getting 1 RoomModel object through the
+	 * ResultSet with a given ID, if none is given it returns
+	 * the first entry
+	 * @param room_id  Room ID
+	 * @return RoomModel object
+	 */
+	public static RoomModel getRoom(int room_id) {
+		room_id=(room_id<0)?0:room_id;
+		
+		try  {
+			if (room_id==0) {
+				System.out.println("first");
+				rs.first();
+				return new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
+						rs.getInt("numero_camas"), rs.getDouble("precio"),
+						rs.getString("nombre"), rs.getString("descripcion"));
+			}
+			
+			rs.beforeFirst();
+			while (rs.next()) {
+				if (rs.getInt("id")==room_id) {
+					return new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
+							rs.getInt("numero_camas"), rs.getDouble("precio"),
+							rs.getString("nombre"), rs.getString("descripcion"));
 				}
 			}
 			

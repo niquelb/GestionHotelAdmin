@@ -83,6 +83,26 @@ public class BookingModel {
 	}
 	
 	/**
+	 * Constructor and date field
+	 * (Auto generated)
+	 * @param id ID
+	 * @param num_adults Number of adults
+	 * @param num_children Number of children
+	 * @param date_start Booking start date
+	 * @param date_end Booking end date
+	 * @param user_id User ID
+	 */
+	public BookingModel(int id, int num_adults, int num_children, Date date_start, Date date_end, String user_id) {
+		super();
+		this.id = id;
+		this.num_adults = num_adults;
+		this.num_children = num_children;
+		this.date_start = date_start;
+		this.date_end = date_end;
+		this.user_id = user_id;
+	}
+
+	/**
 	 * Method for getting an ArrayList with all bookings or with
 	 * specified filters
 	 * 
@@ -105,7 +125,7 @@ public class BookingModel {
 			rs.absolute(page_num);
 			if (user_id.equals("") && start_date==null && end_date==null) {
 				for (int i = 0; i < rows_per_page; i++) {
-					al.add(new BookingModel(rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"),
+					al.add(new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
 							rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
 							rs.getString("user_id")));
 					
@@ -115,7 +135,7 @@ public class BookingModel {
 			} if (!user_id.equals("")) {
 				for (int i = 0; i < rows_per_page; i++) {
 					if (rs.getString("user_id").equals(user_id)) {
-						al.add(new BookingModel(rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"),
+						al.add(new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
 								rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
 								rs.getString("user_id")));
 					}
@@ -131,7 +151,7 @@ public class BookingModel {
 					for (int i = 0; i < rows_per_page; i++) {
 						if ((rs.getDate("fecha_entrada").after(start_date) || rs.getDate("fecha_entrada").equals(start_date)) &&
 								(rs.getDate("fecha_salida").before(end_date) || rs.getDate("fecha_salida").equals(end_date))) {
-							al.add(new BookingModel(rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"),
+							al.add(new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
 									rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
 									rs.getString("user_id")));
 						}
@@ -143,7 +163,7 @@ public class BookingModel {
 				
 				for (int i = 0; i < rows_per_page; i++) {
 					if (rs.getDate("fecha_entrada").after(start_date) || rs.getDate("fecha_entrada").equals(start_date)) {
-						al.add(new BookingModel(rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"),
+						al.add(new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
 								rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
 								rs.getString("user_id")));
 					}
@@ -154,7 +174,7 @@ public class BookingModel {
 			} if (end_date!=null) {
 				for (int i = 0; i < rows_per_page; i++) {
 					if (rs.getDate("fecha_salida").before(end_date) || rs.getDate("fecha_salida").equals(end_date)) {
-						al.add(new BookingModel(rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"),
+						al.add(new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
 								rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
 								rs.getString("user_id")));
 					}
@@ -185,7 +205,7 @@ public class BookingModel {
 		try {
 			if (booking_id<=0) {
 				rs.first();
-				return new BookingModel (rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"),
+				return new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
 						rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
 						rs.getString("user_id"));
 			}
@@ -193,7 +213,56 @@ public class BookingModel {
 			rs.beforeFirst();
 			while (rs.next()) {
 				if (rs.getInt("id")==booking_id) {
-					return new BookingModel (rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"),
+					return new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
+							rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
+							rs.getString("user_id"));
+				}
+			}
+			
+			return null;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Method for getting 1 BookingModel object from the
+	 * ResultSet based on the given User ID and start_date
+	 * 
+	 * @param user_id User ID for filtering
+	 * @param start_date Start date for filtering
+	 * @return BookingModel object, null if error or none found with filters
+	 */
+	public static BookingModel getBooking(String user_id, Date start_date) {
+		
+		user_id=(user_id=="")?null:user_id;
+		
+		try {
+			if (user_id==null) {
+				rs.first();
+				return new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
+						rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
+						rs.getString("user_id"));
+			}
+			
+			if (start_date==null) {
+				rs.beforeFirst();
+				while (rs.next()) {
+					if (rs.getString("user_id").equals(user_id)) {
+						return new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
+								rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
+								rs.getString("user_id"));
+					}
+					break;
+				}
+			}
+			
+			rs.beforeFirst();
+			while (rs.next()) {
+				if (rs.getString("user_id").equals(user_id) && rs.getDate("fecha_entrada").equals(start_date)) {
+					return new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
 							rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
 							rs.getString("user_id"));
 				}
