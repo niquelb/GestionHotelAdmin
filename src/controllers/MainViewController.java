@@ -30,8 +30,7 @@ public class MainViewController implements ActionListener {
 				view.switchMainContent(MainView.ROOM_VIEW);
 				break;
 			case "bookings":
-				System.err.println("Not yet implemented");
-//				view.switchMainContent(MainView.BOOKING_VIEW);
+				view.switchMainContent(MainView.BOOKING_VIEW);
 				break;
 			case "log_out":
 				System.exit(0);

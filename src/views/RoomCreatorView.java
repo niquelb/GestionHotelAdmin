@@ -48,12 +48,10 @@ public class RoomCreatorView extends JFrame {
         setLocationByPlatform(true);
         setVisible(true);
         setSize(500,500);
-
-		
-
+        
 		setContentPane(pane);
 		
-		JLabel lblTitle = new JLabel("Crear Usuario");
+		JLabel lblTitle = new JLabel("Crear Habitacion");
 		lblTitle.setFont(new Font("Roboto Black", Font.BOLD, 24));
 		
 		iconClose.setColor1(new java.awt.Color(111, 111, 111));
@@ -120,8 +118,8 @@ public class RoomCreatorView extends JFrame {
 						.addGroup(gl_pane.createSequentialGroup()
 							.addGroup(gl_pane.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_pane.createSequentialGroup()
-									.addComponent(lblTitle, GroupLayout.PREFERRED_SIZE, 159, GroupLayout.PREFERRED_SIZE)
-									.addGap(302)
+									.addComponent(lblTitle)
+									.addGap(266)
 									.addComponent(lblCloseBtn, GroupLayout.PREFERRED_SIZE, 15, GroupLayout.PREFERRED_SIZE))
 								.addGroup(gl_pane.createSequentialGroup()
 									.addGap(10)

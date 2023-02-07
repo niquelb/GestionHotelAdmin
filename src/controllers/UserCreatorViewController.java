@@ -61,7 +61,7 @@ public class UserCreatorViewController implements ActionListener, MouseListener{
 			if (!UserDataChecker.validateEmail(email)) {
 				JOptionPane.showMessageDialog(view,
 					    "El email no es correcto, asegurate de que sigue el siguiente patron:"
-					    + "XXXXXXXX@XXXX.XXX",
+					    + "XXXXXXXX@XXXX.XXX Ej. correo@gmail.com",
 					    "Error",
 					    JOptionPane.PLAIN_MESSAGE);
 				break;

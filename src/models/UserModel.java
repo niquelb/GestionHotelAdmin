@@ -30,12 +30,12 @@ public class UserModel {
 	/**
 	 * Number of rows for each page
 	 */
-	public static int ROWS_PER_PAGE=10;
+	public final static int ROWS_PER_PAGE=10;
 	
 	/**
 	 * Connection object
 	 */
-	private static Connection conn=Main.conn;
+	private final static Connection conn=Main.conn;
 	
 	/**
 	 * ResultSet with all of the users
@@ -111,7 +111,7 @@ public class UserModel {
 	 */
 	public static ArrayList<UserModel> getUserList(String email, String name, int page_num) {
 		ArrayList<UserModel> al=new ArrayList<>();
-		page_num=page_num*10+1;
+		page_num=page_num*ROWS_PER_PAGE+1;
 		
 		name=(name==null)?"":name;
 		email=(email==null)?"":email;

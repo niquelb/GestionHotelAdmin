@@ -10,6 +10,12 @@ import org.mariadb.jdbc.Connection;
 import main.Main;
 import utils.BDConnector;
 
+/**
+ * Model class for the rooms table
+ * 
+ * @author Nico
+ *
+ */
 public class RoomModel {
 	private int id,
 	quantity,
@@ -99,7 +105,7 @@ public class RoomModel {
 	 */
 	public static ArrayList<RoomModel> getRoomList(String name, double price, int num_guests, int page_num) {
 		ArrayList<RoomModel> al=new ArrayList<>();
-		page_num=page_num*10+1;
+		page_num=page_num*ROWS_PER_PAGE+1;
 		
 		int rows_per_page=(getTotalRows()<ROWS_PER_PAGE)?getTotalRows():ROWS_PER_PAGE;
 		
@@ -109,7 +115,7 @@ public class RoomModel {
 		
 		try {
 			rs.absolute(page_num);
-			if (name==""&&price>=MAX_PRICE&&num_guests>=MAX_GUESTS) {
+			if (name.equals("")&&price>=MAX_PRICE&&num_guests>=MAX_GUESTS) {
 				for (int i = 0; i < rows_per_page; i++) {
 					al.add(new RoomModel(rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
 							rs.getInt("numero_camas"), rs.getDouble("precio"),
@@ -168,32 +174,33 @@ public class RoomModel {
 	
 	/**
 	 * Method for getting 1 RoomModel object from the ResultSet
-	 * based on the room name given (NOT the "id" field from the DB,
-	 * If it is null or empty, the first room will be returned
+	 * based on the room name given (NOT the "id" field from the DB),
+	 * if it is null or empty, the first room will be returned
+	 * 
 	 * @param room_id Room name for filtering (NOT the "id" field from the DB)
 	 * @return RoomModel object, null if error
 	 */
 	public static RoomModel getRoom(String room_id) {
 		try  {
-		if (room_id==null || room_id.equals("")) {
-			rs.first();
-			return new RoomModel(
-					rs.getInt("cantidad"),rs.getInt("numero_maximo_personas"),
-					rs.getInt("numero_camas"),rs.getDouble("precio"),
-					rs.getString("nombre"),rs.getString("descripcion"));
-		}
-		
-		rs.beforeFirst();
-		while (rs.next()) {
-			if (rs.getString("nombre").toUpperCase().equals(room_id.toUpperCase())) {
+			if (room_id==null || room_id.equals("")) {
+				rs.first();
 				return new RoomModel(
 						rs.getInt("cantidad"),rs.getInt("numero_maximo_personas"),
 						rs.getInt("numero_camas"),rs.getDouble("precio"),
 						rs.getString("nombre"),rs.getString("descripcion"));
 			}
-		}
-		
-		return null;
+			
+			rs.beforeFirst();
+			while (rs.next()) {
+				if (rs.getString("nombre").toUpperCase().equals(room_id.toUpperCase())) {
+					return new RoomModel(
+							rs.getInt("cantidad"),rs.getInt("numero_maximo_personas"),
+							rs.getInt("numero_camas"),rs.getDouble("precio"),
+							rs.getString("nombre"),rs.getString("descripcion"));
+				}
+			}
+			
+			return null;
 		
 		} catch (SQLException e) {
 			// TODO: handle exception
