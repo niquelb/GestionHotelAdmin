@@ -33,7 +33,6 @@ public class UserListViewController implements ActionListener {
 		JTable table=view.getTable();
 		JScrollPane pane=view.getPane();
 		
-		
 		ArrayList<UserModel> al=UserModel.getUserList(email, name, page_num);
 		
 		DefaultTableModel model=new DefaultTableModel();
@@ -59,7 +58,7 @@ public class UserListViewController implements ActionListener {
 		}
 		
 		table.getColumn("Modificar").setCellRenderer(new ButtonRenderer());
-		table.getColumn("Modificar").setCellEditor(new ButtonEditor(new JCheckBox(), table, al));
+		table.getColumn("Modificar").setCellEditor(new ButtonEditor(new JCheckBox(), table, al, null));
 		
 		// The width is -18 to compensate for the vertical scrollbar
 		table.setPreferredSize(new Dimension(pane.getWidth()-18, pane.getHeight()));
@@ -84,13 +83,13 @@ public class UserListViewController implements ActionListener {
 			updatePageTextField();
 			
 			buildTable(email, name);
-			view.getBtnClearFilters().setVisible(true);
+			view.getBtnClearFilters().setEnabled(true);
 			
 			break;
 		case "clear":
 			name=null;
 			email=null;
-			view.getBtnClearFilters().setVisible(false);
+			view.getBtnClearFilters().setEnabled(false);
 			view.getTextFieldName().setText("");
 			view.getTextFieldEmail().setText("");
 			

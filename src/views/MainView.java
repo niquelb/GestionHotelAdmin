@@ -30,7 +30,9 @@ public class MainView extends JFrame {
 
 	private final JPanel main_panel=new JPanel();
 	private final JPanel center_panel=new JPanel();
-	private final JPanel side_panel=new JPanel();
+	private final JPanel navi_panel=new JPanel();
+	private final JPanel bottom_panel = new JPanel();
+	private final JPanel side_panel = new JPanel();
 	
 	private final SimpleTitleBar title_bar=new SimpleTitleBar();
 	private final UserListView user_list=new UserListView();
@@ -40,6 +42,7 @@ public class MainView extends JFrame {
 	private final JButton btnRooms = new JButton("HABITACIONES");
 	private final JButton btnBookings = new JButton("RESERVAS");
 	private final JButton btnLog_out = new JButton("CERRAR SESION");
+	private final JLabel lblCopyright = new JLabel("Copyright © Nicolas Palaoro 2023");
 
 	/**
 	 * Constructor for the view
@@ -56,15 +59,27 @@ public class MainView extends JFrame {
 		header.setBackground(new Color(25, 25, 25));
 		
 		main_panel.add(header, BorderLayout.NORTH);
-		side_panel.setBackground(new Color(25, 25, 25));
-		main_panel.add(side_panel, BorderLayout.WEST);
+		navi_panel.setBackground(new Color(25, 25, 25));
+		main_panel.add(navi_panel, BorderLayout.WEST);
 		center_panel.setBackground(new Color(45, 45, 45));
 		main_panel.add(center_panel, BorderLayout.CENTER);
+		bottom_panel.setBackground(new Color(45, 45, 45));
+		main_panel.add(bottom_panel, BorderLayout.SOUTH);
+		side_panel.setBackground(new Color(45, 45, 45));
+		main_panel.add(side_panel, BorderLayout.EAST);
+		
+		side_panel.setPreferredSize(new Dimension(75, main_panel.getHeight()));
+		bottom_panel.setPreferredSize(new Dimension(main_panel.getWidth(), 75));
+		lblCopyright.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCopyright.setForeground(Color.WHITE);
+		lblCopyright.setFont(new Font("Roboto Light", Font.PLAIN, 18));
+		
+		bottom_panel.add(lblCopyright);
 		
 		center_panel.setPreferredSize(getMinimumSize());
-		side_panel.setPreferredSize(new Dimension(220, main_panel.getHeight()));
+		navi_panel.setPreferredSize(new Dimension(220, main_panel.getHeight()));
 		
-		header.setPreferredSize(new Dimension(200, 75));
+		header.setPreferredSize(new Dimension(main_panel.getWidth(), 75));
 		
 		lblUser_id.setFont(new Font("Roboto Light", Font.PLAIN, 24));
 		lblUser_id.setHorizontalAlignment(SwingConstants.CENTER);
@@ -72,27 +87,28 @@ public class MainView extends JFrame {
 		
 		header.add(lblUser_id, BorderLayout.CENTER);
 		
+		
 		center_panel.setLayout(new CardLayout(0, 0));
 		user_list.setBackground(new Color(45, 45, 45));
-		center_panel.add(user_list, USER_VIEW);
 		room_list.setBackground(new Color(45, 45, 45));
 		center_panel.add(room_list, ROOM_VIEW);
+		center_panel.add(user_list, USER_VIEW);
 
-		GroupLayout gl_side_panel = new GroupLayout(side_panel);
-		gl_side_panel.setHorizontalGroup(
-			gl_side_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_side_panel.createSequentialGroup()
+		GroupLayout gl_navi_panel = new GroupLayout(navi_panel);
+		gl_navi_panel.setHorizontalGroup(
+			gl_navi_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_navi_panel.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_side_panel.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_navi_panel.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnUsers, GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
 						.addComponent(btnRooms, GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
 						.addComponent(btnBookings, GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
 						.addComponent(btnLog_out, GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))
 					.addContainerGap())
 		);
-		gl_side_panel.setVerticalGroup(
-			gl_side_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_side_panel.createSequentialGroup()
+		gl_navi_panel.setVerticalGroup(
+			gl_navi_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_navi_panel.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(btnUsers, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
 					.addGap(18)
@@ -103,7 +119,7 @@ public class MainView extends JFrame {
 					.addComponent(btnLog_out, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(514, Short.MAX_VALUE))
 		);
-		side_panel.setLayout(gl_side_panel);
+		navi_panel.setLayout(gl_navi_panel);
 		
 		title_bar.init(this);
 		
@@ -117,6 +133,7 @@ public class MainView extends JFrame {
 		btnBookings.setActionCommand("bookings");
 		ComponentInit.setButtonProperties(btnLog_out, controller);
 		btnLog_out.setActionCommand("log_out");
+		
 	}
 	
 	public void setJFrame() {

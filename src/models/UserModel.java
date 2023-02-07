@@ -28,6 +28,11 @@ public class UserModel {
 		phone_num;
 	
 	/**
+	 * Number of rows for each page
+	 */
+	public static int ROWS_PER_PAGE=10;
+	
+	/**
 	 * Connection object
 	 */
 	private static Connection conn=Main.conn;
@@ -111,10 +116,12 @@ public class UserModel {
 		name=(name==null)?"":name;
 		email=(email==null)?"":email;
 		
+		int rows_per_page=(getTotalRows()<ROWS_PER_PAGE)?getTotalRows():ROWS_PER_PAGE;
+		
 		try {
 			rs.absolute(page_num);
 			if (email.equals("") && name.equals("")) {
-				for (int i = 0; i < 10; i++) {
+				for (int i = 0; i < rows_per_page; i++) {
 					al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
 							rs.getString("apellidos"), rs.getString("telefono")));
 					
@@ -124,7 +131,7 @@ public class UserModel {
 				return al;
 			
 			} else if (!email.equals("")) {
-				for (int i = 0; i < 10; i++) {
+				for (int i = 0; i < rows_per_page; i++) {
 					if (rs.getString("email").toUpperCase().contains(email.toUpperCase()))
 						al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
 								rs.getString("apellidos"), rs.getString("telefono")));
@@ -134,7 +141,7 @@ public class UserModel {
 				return al;
 			
 			} else {
-				for (int i = 0; i < 10; i++) {
+				for (int i = 0; i < rows_per_page; i++) {
 					if (rs.getString("nombre")!=null && rs.getString("nombre").toUpperCase().contains(name.toUpperCase()))
 						al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
 								rs.getString("apellidos"), rs.getString("telefono")));
@@ -158,33 +165,26 @@ public class UserModel {
 	 * @return UserModel object, null if error
 	 */
 	public static UserModel getUser(String user_id) {
+		try {
 		if (user_id==null || user_id.equals("")) {
-			try {
-				rs.first();
-				return new UserModel(rs.getString("email"),rs.getString("password") , rs.getString("nombre"), rs.getString("apellidos"), rs.getString("telefono"));
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}			
-			
+			rs.first();
+			return new UserModel(rs.getString("email"),rs.getString("password") , rs.getString("nombre"), rs.getString("apellidos"), rs.getString("telefono"));
 		}
 		
-		try {
-			rs.beforeFirst();
-			while (rs.next()) {
-				if (rs.getString("email").equals(user_id)) {
-					return new UserModel(rs.getString("email"),rs.getString("password"), rs.getString("nombre"), rs.getString("apellidos"), rs.getString("telefono"));
-				} 
-			}
-			rs.first();
-			return null;
+		rs.beforeFirst();
+		while (rs.next()) {
+			if (rs.getString("email").toUpperCase().equals(user_id.toUpperCase())) {
+				return new UserModel(rs.getString("email"),rs.getString("password"), rs.getString("nombre"), rs.getString("apellidos"), rs.getString("telefono"));
+			} 
+		}
+		rs.first();
+		return null;
+
 		} catch (SQLException e) {
 			// TODO: handle exception
 			e.printStackTrace();
 			return null;
 		}
-
 	}
 	
 	/**

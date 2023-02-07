@@ -47,7 +47,8 @@ public class UserListView extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public UserListView() {	
+	public UserListView() {
+		setBackground(new Color(45, 45, 45));	
 		table=new JTable();
 		pane=new JScrollPane();
 		filters_panel = new JPanel();
@@ -95,7 +96,7 @@ public class UserListView extends JPanel {
 		btnClearFilters = new JButton("Limpiar");
 		ComponentInit.setButtonProperties(btnClearFilters,controller);
 		btnClearFilters.setActionCommand("clear");
-		btnClearFilters.setVisible(false);
+		btnClearFilters.setEnabled(false);
 		
 		gl_filters_panel.setHorizontalGroup(
 			gl_filters_panel.createParallelGroup(Alignment.LEADING)
@@ -150,6 +151,7 @@ public class UserListView extends JPanel {
 		add(btnAddUser);
 		
 		JPanel page_selector_panel = new JPanel();
+		page_selector_panel.setBackground(new Color(45, 45, 45));
 		page_selector_panel.setBounds(10, 204, 706, 39);
 		add(page_selector_panel);
 		

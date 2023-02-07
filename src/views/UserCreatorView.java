@@ -3,7 +3,6 @@ package views;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import controllers.UserCreatorViewController;
@@ -40,7 +39,7 @@ public class UserCreatorView extends JFrame {
 	public UserCreatorView() {
 		setTitle("Crear Usuario");
 		pane = new JPanel();
-		pane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		pane.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		setResizable(false);
@@ -51,7 +50,7 @@ public class UserCreatorView extends JFrame {
         setSize(500,500);
         
         setContentPane(pane);
-        pane.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
+        
         
         JLabel lblCrearUsuario = new JLabel("Crear Usuario");
         lblCrearUsuario.setFont(new Font("Roboto Black", Font.BOLD, 24));
