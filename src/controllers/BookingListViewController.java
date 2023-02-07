@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -93,8 +94,20 @@ public class BookingListViewController implements ActionListener{
 			new BookingCreatorView();
 			
 			break;
+		case "submit":
+			JOptionPane.showMessageDialog(view,
+				    "Opcion aun no soportada para las reservas",
+				    "Error",
+				    JOptionPane.PLAIN_MESSAGE);
+			break;
+		case "clear":
+			JOptionPane.showMessageDialog(view,
+				    "Opcion aun no soportada para las reservas",
+				    "Error",
+				    JOptionPane.PLAIN_MESSAGE);
+			break;
 		default:
-			throw new IllegalArgumentException("Unexpected value: " + e.getActionCommand());
+			System.err.println("Unexpected Value");
 		}
 		
 	}
