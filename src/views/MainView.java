@@ -36,7 +36,7 @@ public class MainView extends JFrame {
 	private final SimpleTitleBar title_bar=new SimpleTitleBar();
 	private final UserListView user_list=new UserListView();
 	private final RoomListView room_list=new RoomListView();
-	private final BookingListView booking_list=new BookingListView();
+	private final BookingListView booking_list;
 	private final JLabel lblUser_id = new JLabel("user_id");
 	private final JButton btnUsers = new JButton("USUARIOS");
 	private final JButton btnRooms = new JButton("HABITACIONES");
@@ -47,6 +47,8 @@ public class MainView extends JFrame {
 	 * Constructor for the view
 	 */
 	public MainView(String user_id) {
+		booking_list=new BookingListView(user_id);
+		
 		setJFrame();
         main_panel.setBackground(new Color(45, 45, 45));
         main_panel.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));

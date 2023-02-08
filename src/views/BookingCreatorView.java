@@ -34,7 +34,7 @@ public class BookingCreatorView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public BookingCreatorView() {
+	public BookingCreatorView(String user_id) {
 		setTitle("Crear Reserva");
 		pane = new JPanel();
 		pane.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
@@ -177,7 +177,7 @@ public class BookingCreatorView extends JFrame {
 		);
 		pane.setLayout(gl_pane);
 		
-		controller=new BookingCreatorViewController(this);
+		controller=new BookingCreatorViewController(this, user_id);
 		
 		lblCloseBtn.addMouseListener(controller);
 		btnSubmit.setActionCommand("submit");

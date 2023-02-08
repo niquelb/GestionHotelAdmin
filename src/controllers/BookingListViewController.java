@@ -2,6 +2,8 @@ package controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.time.DateTimeException;
 import java.util.ArrayList;
 
 import javax.swing.JCheckBox;
@@ -14,6 +16,7 @@ import models.BookingModel;
 import models.RoomModel;
 import utils.ButtonEditor;
 import utils.ButtonRenderer;
+import utils.StringToDateConverter;
 import views.BookingCreatorView;
 import views.BookingListView;
 
@@ -22,29 +25,27 @@ public class BookingListViewController implements ActionListener{
 	private final BookingListView view;
 	
 	private int page_num=0;
-	
+	private String user_id;
 
 	private int total_pages=(int) Math.ceil(BookingModel.getTotalRows()/10)-1;
 	
-	public BookingListViewController(BookingListView view) {
+	public BookingListViewController(BookingListView view, String user_id) {
 		super();
 		this.view = view;
+		this.user_id=user_id;
 		
-		buildTable();
+		try {
+			buildTable(null, null, null);
+		} catch (Exception e) {}
 	}
 	
-	public void buildTable() {
+	public void buildTable(String user_id, Date start_date, Date end_date) throws Exception {
 		JScrollPane pane=view.getPane();
 		JTable table=view.getTable();
 		
 		ArrayList<BookingModel> al=new ArrayList<>();
 		
-		try {
-			al=BookingModel.getBookingList(null, null, null, page_num);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		al=BookingModel.getBookingList(user_id, start_date, end_date, page_num);
 		
 		DefaultTableModel model=new DefaultTableModel();
 		table.setModel(model);
@@ -91,20 +92,50 @@ public class BookingListViewController implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
 		case "create_booking":
-			new BookingCreatorView();
+			new BookingCreatorView(user_id);
 			
 			break;
 		case "submit":
-			JOptionPane.showMessageDialog(view,
-				    "Opcion aun no soportada para las reservas",
-				    "Error",
-				    JOptionPane.PLAIN_MESSAGE);
+			String user_id=(view.getTextFieldUser_id().getText().equals("")?null:view.getTextFieldUser_id().getText());
+			Date start_date;
+			try {
+				start_date=StringToDateConverter.stringToDate(view.getTextFieldStart_date().getText());
+			} catch (DateTimeException e2) {
+				start_date=null;
+			}
+			Date end_date;
+			try {
+				end_date=StringToDateConverter.stringToDate(view.getTextFieldEnd_date().getText());
+			} catch (DateTimeException e2) {
+				end_date=null;
+			}
+			
+			try {
+				buildTable(user_id, start_date, end_date);
+			} catch (Exception e2) {
+				JOptionPane.showMessageDialog(view,
+					    "La fecha de salida debe ser posterior a la fecha de entrada",
+					    "Error",
+					    JOptionPane.PLAIN_MESSAGE);
+			}
+			
+			view.getBtnClear().setEnabled(true);
 			break;
+			
 		case "clear":
-			JOptionPane.showMessageDialog(view,
-				    "Opcion aun no soportada para las reservas",
-				    "Error",
-				    JOptionPane.PLAIN_MESSAGE);
+			view.getBtnClear().setEnabled(false);
+			user_id=null;
+			start_date=null;
+			end_date=null;
+			
+			view.getTextFieldUser_id().setText("");
+			view.getTextFieldStart_date().setText("");
+			view.getTextFieldEnd_date().setText("");
+			
+			try {
+				buildTable(null, null, null);
+			} catch (Exception e1) {}
+			
 			break;
 		default:
 			System.err.println("Unexpected Value");

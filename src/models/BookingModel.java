@@ -134,7 +134,7 @@ public class BookingModel {
 				return al;
 			} if (!user_id.equals("")) {
 				for (int i = 0; i < rows_per_page; i++) {
-					if (rs.getString("user_id").equals(user_id)) {
+					if (rs.getString("user_id").toUpperCase().contains(user_id.toUpperCase())) {
 						al.add(new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
 								rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
 								rs.getString("user_id")));

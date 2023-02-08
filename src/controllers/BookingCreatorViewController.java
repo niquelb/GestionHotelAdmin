@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import models.BookingModel;
+import utils.StringToDateConverter;
 import utils.UserDataChecker;
 import views.BookingCreatorView;
 import views.BookingRoomCreatorView;
@@ -22,9 +23,11 @@ public class BookingCreatorViewController implements ActionListener, MouseListen
 	
 	private final BookingCreatorView view;
 
-	public BookingCreatorViewController(BookingCreatorView view) {
+	public BookingCreatorViewController(BookingCreatorView view, String user_id) {
 		super();
 		this.view = view;
+		
+		view.getTextFieldUser_id().setText(user_id);
 		
 	}
 
@@ -35,20 +38,14 @@ public class BookingCreatorViewController implements ActionListener, MouseListen
 			String user_id=(String.valueOf(view.getTextFieldUser_id().getText()).equals(""))?null:String.valueOf(view.getTextFieldUser_id().getText());
 			Date start_date;
 			try {
-				// LocalDate is better than Date, but jdbc uses Date
-				// ld gets the date from the text field, if it isn't valid it throws "DateTimeException" (handled)
-				// then ld gets converted to Date format => "(Date) Date.from(LOCALDATEOBJECT.atStartOfDay(ZoneId.systemDefault()).toInstant())"
-				LocalDate ld=LocalDate.parse(view.getTextFieldStart_date().getText());
-				start_date=new Date(Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime());
+				start_date=StringToDateConverter.stringToDate(view.getTextFieldStart_date().getText());
 			} catch (DateTimeException e2) {
 				start_date=null;
 			}
 			
 			Date end_date;
 			try {
-				// See ^
-				LocalDate ld=LocalDate.parse(view.getTextFieldEnd_date().getText());
-				end_date=new Date(Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime());
+				end_date=StringToDateConverter.stringToDate(view.getTextFieldEnd_date().getText());
 			} catch (DateTimeException e2) {
 				end_date=null;
 			}

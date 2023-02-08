@@ -40,7 +40,7 @@ public class BookingListView extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public BookingListView() {
+	public BookingListView(String user_id) {
 		setBackground(new Color(45, 45, 45));
 		setLayout(new BorderLayout(10, 5));
 		
@@ -190,7 +190,7 @@ public class BookingListView extends JPanel {
 		pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		list_panel.add(pane, BorderLayout.CENTER);
 		
-		controller=new BookingListViewController(this);
+		controller=new BookingListViewController(this, user_id);
 		
 		ComponentInit.setButtonProperties(btnSubmit, controller);
 		ComponentInit.setButtonProperties(btnClear, controller);
