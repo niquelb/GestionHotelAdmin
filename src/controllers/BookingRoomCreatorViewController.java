@@ -5,7 +5,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -21,27 +25,38 @@ import utils.ButtonEditor;
 import utils.ButtonRenderer;
 import views.BookingRoomCreatorView;
 
-public class BookingRoomCreatorViewController implements ActionListener, MouseListener {
+public class BookingRoomCreatorViewController implements ActionListener, MouseListener,WindowListener {
 	private final BookingRoomCreatorView view;
 	private final BookingModel booking;
 	private int page_num=0;
 	private JTable table;
 	private ArrayList<RoomModel> al;
 	private ArrayList<RoomModel> al2=new ArrayList<>();
+	
+	private boolean isCancelled=true;
 
 	public BookingRoomCreatorViewController(BookingRoomCreatorView view, int booking_id) {
 		super();
 		this.view = view;
 		this.table=view.getTable();
-		this.booking=BookingModel.getBooking(booking_id);
+		
+		Map<String, Object> params=new HashMap<String, Object>();
+		
+		params.put("id", booking_id);
+		
+		this.booking=BookingModel.getBooking(params);
 		
 		buildTable();
 	}
 	
+	
+	
 	public void buildTable() {
 		JScrollPane pane=view.getScrollPane();
+
+		Map<String, Object> params=new HashMap<String, Object>();
 		
-		al=RoomModel.getRoomList(null, 0, 0, page_num);
+		al=RoomModel.getRoomList(params, page_num);
 		
 		DefaultTableModel model=new DefaultTableModel();
 		table.setModel(model);
@@ -92,7 +107,12 @@ public class BookingRoomCreatorViewController implements ActionListener, MouseLi
 		
 		if (e.getSource().getClass()==JTable.class) {
 			System.out.println(al.get(view.getRow()).getName());
-			RoomModel selected_room=RoomModel.getRoom(al.get(view.getRow()).getId());
+			
+			Map<String, Object> params=new HashMap<String, Object>();
+			
+			params.put("id", al.get(view.getRow()).getId());
+			
+			RoomModel selected_room=RoomModel.getRoom(params);
 			
 			
 			String[] arr= {"Confirmar","Cancelar"};
@@ -133,12 +153,12 @@ public class BookingRoomCreatorViewController implements ActionListener, MouseLi
 						    );
 					if (o==0) {
 						for (RoomModel rm : al2) {
-							BookingRoomModel brm=new BookingRoomModel(rm.getId(), booking.getId(), al.size()-1, rm.getPrice());
-							
-							BookingRoomModel.createBooking(brm);
+							new BookingRoomModel(rm.getId(), booking.getId(), al.size()-1, rm.getPrice()).createBooking();
 						}
 						
 					}
+					
+					isCancelled=false;
 					
 					view.dispose();
 				}
@@ -167,6 +187,74 @@ public class BookingRoomCreatorViewController implements ActionListener, MouseLi
 	@Override
 	public void mouseExited(MouseEvent e) {
 		view.setCursor(Cursor.DEFAULT_CURSOR);
+	}
+
+
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+		System.out.println("CLOSED");
+		
+		if (isCancelled) {
+			System.err.println("CANCELLED <-----------");
+			booking.deleteBooking(); // if the user cancels the booking is removed
+		}
+	}
+
+
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+		System.out.println("DEACTIVATED");
+		
+		if (isCancelled) {
+			System.err.println("CANCELLED <-----------");
+			booking.deleteBooking(); // if the user cancels the booking is removed
+		}
 	}
 	
 }

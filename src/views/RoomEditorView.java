@@ -52,7 +52,7 @@ public class RoomEditorView extends JFrame {
 
 		setContentPane(pane);
 		
-		JLabel lblTitle = new JLabel("Editar Usuario");
+		JLabel lblTitle = new JLabel("Editar Habitacion");
 		lblTitle.setFont(new Font("Roboto Black", Font.BOLD, 24));
 		
 		iconClose.setColor1(new java.awt.Color(111, 111, 111));
@@ -120,7 +120,7 @@ public class RoomEditorView extends JFrame {
 							.addGroup(gl_pane.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_pane.createSequentialGroup()
 									.addComponent(lblTitle)
-									.addGap(297)
+									.addGap(261)
 									.addComponent(lblCloseBtn, GroupLayout.PREFERRED_SIZE, 15, GroupLayout.PREFERRED_SIZE))
 								.addGroup(gl_pane.createSequentialGroup()
 									.addGap(10)
@@ -130,7 +130,7 @@ public class RoomEditorView extends JFrame {
 										.addGroup(gl_pane.createSequentialGroup()
 											.addGap(10)
 											.addGroup(gl_pane.createParallelGroup(Alignment.LEADING, false)
-												.addComponent(textAreaDescription)
+												.addComponent(textAreaDescription, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 												.addComponent(textFieldName, GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE))))))
 							.addContainerGap())
 						.addGroup(gl_pane.createSequentialGroup()

@@ -186,11 +186,20 @@ public class BookingListView extends JPanel {
 		btnLastPage.setActionCommand("last_page");
 		bottom_navi.add(btnLastPage);
 		
-		pane = new JScrollPane();
-		pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		pane = new JScrollPane(table,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		list_panel.add(pane, BorderLayout.CENTER);
 		
 		controller=new BookingListViewController(this, user_id);
+		
+		btnFirstPage.addActionListener(controller);
+		btnFirstPage.setActionCommand("first_page");
+		btnPrevPage.addActionListener(controller);
+		btnPrevPage.setActionCommand("prev_page");
+		btnNextPage.addActionListener(controller);
+		btnNextPage.setActionCommand("next_page");
+		btnLastPage.addActionListener(controller);
+		btnLastPage.setActionCommand("last_page");
 		
 		ComponentInit.setButtonProperties(btnSubmit, controller);
 		ComponentInit.setButtonProperties(btnClear, controller);
@@ -295,7 +304,4 @@ public class BookingListView extends JPanel {
 	public void setPane(JScrollPane pane) {
 		this.pane = pane;
 	}
-	
-	
-
 }

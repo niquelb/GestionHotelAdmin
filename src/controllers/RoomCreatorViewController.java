@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -63,8 +65,13 @@ public class RoomCreatorViewController implements ActionListener, MouseListener{
 					    JOptionPane.PLAIN_MESSAGE);
 				break;
 			}
-			System.out.println(RoomModel.getRoom(name)!=null);
-			if (RoomModel.getRoom(name)!=null) {
+			
+			Map<String, Object> params = new HashMap<String, Object>();
+			
+			if (name!=null && !name.equals(""))
+				params.put("nombre", name);
+			
+			if (RoomModel.getRoom(params)!=null) {
 				JOptionPane.showMessageDialog(view,
 					    "Este nombre ya esta registrado, por favor, escoja otro.\n"
 					    + "Si desea cambiar la cantidad de la habitacion en cuestion, hagalo editandola desde la tabla.",
@@ -85,8 +92,7 @@ public class RoomCreatorViewController implements ActionListener, MouseListener{
 				    );
 			
 			if (n==0) {
-				System.out.println("creation start");
-				RoomModel.createRoom(new RoomModel(quantity, max_guests, num_beds, price, name, description));
+				new RoomModel(quantity, max_guests, num_beds, price, name, description).createRoom();
 				view.dispose();
 			} else {
 				System.out.println("cancel");

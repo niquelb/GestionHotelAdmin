@@ -3,11 +3,14 @@ package models;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.mariadb.jdbc.Connection;
 
 import main.Main;
 import utils.BDConnector;
+import utils.ResultSetGen;
 
 /**
  * Model class for the table "bookings_rooms"
@@ -27,14 +30,14 @@ public class BookingRoomModel {
 	public final static int ROWS_PER_PAGE=10;
 	
 	/**
-	 * Connection object
+	 * DB Table name
 	 */
-	private static Connection conn=Main.conn;
-	
+	public final static String TABLE_NAME="reservas_habitaciones";
+
 	/**
-	 * ResultSet with all of the rooms
+	 * ResultSet with all of the users
 	 */
-	private static ResultSet rs=BDConnector.execStmt("SELECT * FROM reservas_habitaciones;", conn);
+	private static ResultSet rs=ResultSetGen.generateResultSet(null, TABLE_NAME);
 
 	/**
 	 * Default constructor
@@ -69,118 +72,134 @@ public class BookingRoomModel {
 	}
 	
 	/**
-	 * Method for getting an ArrayList with all BookingRoomModel objects or with
-	 * specified filters
+	 * Method for getting an array list with all bookings_rooms or using specified parameters
 	 * 
-	 * @param room_id Room ID for filtering
-	 * @param booking_id Booking ID for filtering
-	 * @param page_num page number
-	 * @return ArrayList with BookingRoomModel objects, null if error
+	 * @param params Map object with the column-name and the value for filtering
+	 * @param page_num Page number
+	 * @return ArrayList with BookingRoomModel object, null if error
 	 */
-	public static ArrayList<BookingRoomModel> getBookingRoomList(int room_id, int booking_id, int page_num) {
+	public static ArrayList<BookingRoomModel> getBookingRoomList(Map<String, Object> params, int page_num) {
 		ArrayList<BookingRoomModel> al=new ArrayList<>();
-		page_num=page_num*ROWS_PER_PAGE+1;
+		page_num=page_num*ROWS_PER_PAGE;
 		
-		int rows_per_page=(getTotalRows()<ROWS_PER_PAGE)?getTotalRows():ROWS_PER_PAGE;
-		
-		room_id=(room_id<0)?0:room_id;
-		booking_id=(booking_id<0)?0:booking_id;
+		params = params==null
+				? new HashMap<String, Object>()
+				: params;
 		
 		try {
-			rs.absolute(page_num);
+			if (params.isEmpty()) {
+				rs.absolute(page_num);
+
+				int i = 0;
+
+				while (rs.next() && i < ROWS_PER_PAGE) {
+					al.add(new BookingRoomModel(rs.getInt("habitacion_id"),
+							rs.getInt("reserva_id"),
+							rs.getInt("cantidad"),
+							rs.getDouble("precio")));
+					
+					i++;
+				}
+
+				return al;
+			} 
 			
-			if (room_id==0&&booking_id==0) {
-				for (int i = 0; i < rows_per_page; i++) {
-					al.add(new BookingRoomModel(rs.getInt("habitacion_id"), rs.getInt("reserva_id"), rs.getInt("cantidad"), rs.getDouble("precio")));
-					
-					rs.next();
-				}
-				return al;
-			} else if (room_id!=0) {
-				if (booking_id!=0) {
-					for (int i = 0; i < rows_per_page; i++) {
-						if (rs.getInt("habitacion_id")==room_id&&rs.getInt("reserva_id")==booking_id) {
-							al.add(new BookingRoomModel(rs.getInt("habitacion_id"), rs.getInt("reserva_id"), rs.getInt("cantidad"), rs.getDouble("precio")));
-						}
-						
-						rs.next();
-					}
-					return al;
-				}
-				
-				for (int i = 0; i < rows_per_page; i++) {
-					if (rs.getInt("habitacion_id")==room_id) {
-						al.add(new BookingRoomModel(rs.getInt("habitacion_id"), rs.getInt("reserva_id"), rs.getInt("cantidad"), rs.getDouble("precio")));
-					}
-					
-					rs.next();
-				}
-				return al;
-			} else if (booking_id!=0) {
-				for (int i = 0; i < rows_per_page; i++) {
-					if (rs.getInt("reserva_id")==booking_id) {
-						al.add(new BookingRoomModel(rs.getInt("habitacion_id"), rs.getInt("reserva_id"), rs.getInt("cantidad"), rs.getDouble("precio")));
-					}
-					
-					rs.next();
-				}
-				return al;
+			ResultSet rs=ResultSetGen.generateResultSet(params,TABLE_NAME); 
+			
+			//TODO implement date ranges and check end date
+
+			int i=0;
+
+			while (rs.next() && i < ROWS_PER_PAGE) {
+				al.add(new BookingRoomModel(rs.getInt("habitacion_id"),
+						rs.getInt("reserva_id"),
+						rs.getInt("cantidad"),
+						rs.getDouble("precio")));
+				i++;
 			}
+
+			return al;
+
+
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
-		return null;
+		
 	}
 	
 	/**
-	 * Method for getting 1 BookingRoomModel object from the ResultSet based on the given ID,
-	 * if it is -1 (or any other negative number), the first booking will be returned
+	 * Method for getting 1 BookingRoomModel object with specified parameters, if none are given, the first result will be given
 	 * 
-	 * @param id Room ID
-	 * @return BookingRoomModel object, null if error or none found with the ID
+	 * @param params Map object with the column-name and the value for filtering
+	 * @return BookingRoomModel object, null if error
 	 */
-	public static BookingRoomModel getBookingRoom(int id) {
+	public static BookingRoomModel getBookingRoom(Map<String, Object> params) {
+		
+		params = params==null
+				? new HashMap<String, Object>()
+				: params;
+		
 		try {
-			if (id<=0) {
+			
+			if (params.isEmpty()) {
 				rs.first();
-				return new BookingRoomModel(rs.getInt("habitacion_id"), rs.getInt("reserva_id"), rs.getInt("cantidad"), rs.getDouble("precio"));
-			}
+				return new BookingRoomModel(rs.getInt("habitacion_id"),
+						rs.getInt("reserva_id"),
+						rs.getInt("cantidad"),
+						rs.getDouble("precio"));
 			
-			rs.beforeFirst();
-			while (rs.next()) {
-				if (rs.getInt("id")==id) {
-					return new BookingRoomModel(rs.getInt("habitacion_id"), rs.getInt("reserva_id"), rs.getInt("cantidad"), rs.getDouble("precio"));
-				}
 			}
+
+			ResultSet rs=ResultSetGen.generateResultSet(params,TABLE_NAME);
+
+			if (rs.first()) {
+				return new BookingRoomModel(rs.getInt("habitacion_id"),
+						rs.getInt("reserva_id"),
+						rs.getInt("cantidad"),
+						rs.getDouble("precio"));
 			
+			}
+
 			return null;
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
-		
+				
 	}
 	
 	/**
-	 * Method for inserting a booking into the DB through the
-	 * ResultSet using a BookingRoomModel object
-	 * 
-	 * @param model BookingRoomModel object to be used
+	 * Method for inserting a booking into the DB through the ResultSet
 	 */
-	public static void createBooking(BookingRoomModel model) {
+	public void createBooking() {
+		int room_id=this.getRoom_id();
+		int booking_id=this.getBooking_id();
+		int quantity=this.getQuantity()<0
+				? 1
+				: this.getQuantity();
+		double price=this.getPrice()<0
+				? 1
+				: this.getPrice();
+		
+		//TODO check FKs
+		
+		
 		try {
 			rs.moveToInsertRow();
 			
-			rs.updateInt("habitacion_id", model.getRoom_id());
-			rs.updateInt("reserva_id", model.getBooking_id());
-			rs.updateInt("cantidad", model.getQuantity());
-			rs.updateDouble("precio", model.getPrice());
+			rs.updateInt("habitacion_id", room_id);
+			rs.updateInt("reserva_id", booking_id);
+			rs.updateInt("cantidad", quantity);
+			rs.updateDouble("precio", price);
 			
 			rs.insertRow();
+			
+			refreshResultSet();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -201,6 +220,13 @@ public class BookingRoomModel {
 			e.printStackTrace();
 			return -1;
 		}
+	}
+	
+	/**
+	 * Method for refreshing the Result Set
+	 */
+	public static void refreshResultSet() {
+		rs=ResultSetGen.generateResultSet(null, TABLE_NAME);
 	}
 
 	/**

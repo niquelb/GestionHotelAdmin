@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,7 +22,13 @@ public class RoomEditorViewController implements ActionListener, MouseListener {
 	public RoomEditorViewController(RoomEditorView view, String r_id) {
 		super();
 		this.view = view;
-		room=RoomModel.getRoom(r_id);
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		if (r_id!=null && !r_id.equals(""))
+			params.put("nombre", r_id);
+		
+		room=RoomModel.getRoom(params);
 		if (room!=null) {
 			updateFields();
 		} else {
@@ -100,7 +108,7 @@ public class RoomEditorViewController implements ActionListener, MouseListener {
 				room.setPrice(price);
 				room.setQuantity(quantity);
 				
-				RoomModel.updateRoom(room);
+				room.updateRoom();
 				view.dispose();
 			} else {
 				view.dispose();

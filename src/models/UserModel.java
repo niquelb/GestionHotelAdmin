@@ -3,14 +3,16 @@ package models;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.mariadb.jdbc.Connection;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import main.Main;
 import utils.BDConnector;
 import utils.UserDataChecker;
+import utils.ResultSetGen;
 
 /**
  * Model class for the users table
@@ -20,28 +22,28 @@ import utils.UserDataChecker;
  */
 public class UserModel {
 	private String  email,
-		password,
-		token,
-		token_valid_date,
-		name,
-		last_names,
-		phone_num;
-	
+	password,
+	token,
+	token_valid_date,
+	name,
+	last_names,
+	phone_num;
+
 	/**
 	 * Number of rows for each page
 	 */
 	public final static int ROWS_PER_PAGE=10;
-	
+
 	/**
-	 * Connection object
+	 * DB Table name
 	 */
-	private final static Connection conn=Main.conn;
-	
+	public final static String TABLE_NAME="users";
+
 	/**
 	 * ResultSet with all of the users
 	 */
-	private static ResultSet rs=BDConnector.execStmt("SELECT * FROM users;", conn);
-	
+	private static ResultSet rs=ResultSetGen.generateResultSet(null, TABLE_NAME);
+
 
 	/**
 	 * Default constructor
@@ -64,7 +66,7 @@ public class UserModel {
 		this.last_names = last_names;
 		this.phone_num = phone_num;
 	}
-	
+
 	/**
 	 * Constructor without password and token fields
 	 * @param email user's email
@@ -79,7 +81,7 @@ public class UserModel {
 		this.last_names = last_names;
 		this.phone_num = phone_num;
 	}
-	
+
 	/**
 	 * Constructor with password but without
 	 * token fields
@@ -109,54 +111,49 @@ public class UserModel {
 	 * @param page_num page_number ! MUST START FROM 0 ! (First page is number 0, second number 1 etc.)
 	 * @return ArrayList with UserModel objects, null if error
 	 */
-	public static ArrayList<UserModel> getUserList(String email, String name, int page_num) {
+	public static ArrayList<UserModel> getUserList(Map<String, Object> params, int page_num) {
 		ArrayList<UserModel> al=new ArrayList<>();
-		page_num=page_num*ROWS_PER_PAGE+1;
-		
-		name=(name==null)?"":name;
-		email=(email==null)?"":email;
-		
-		int rows_per_page=(getTotalRows()<ROWS_PER_PAGE)?getTotalRows():ROWS_PER_PAGE;
-		
+		page_num=page_num*ROWS_PER_PAGE;
+
+		params = params==null
+				? new HashMap<String, Object>()
+						: params;
 		try {
-			rs.absolute(page_num);
-			if (email.equals("") && name.equals("")) {
-				for (int i = 0; i < rows_per_page; i++) {
+
+			if (params.isEmpty()) {
+				rs.absolute(page_num);
+
+				int i = 0;
+
+				while (rs.next() && i < ROWS_PER_PAGE) {
 					al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
 							rs.getString("apellidos"), rs.getString("telefono")));
-					
-					rs.next();
+					i++;
 				}
-				
+
 				return al;
-			
-			} else if (!email.equals("")) {
-				for (int i = 0; i < rows_per_page; i++) {
-					if (rs.getString("email").toUpperCase().contains(email.toUpperCase()))
-						al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
-								rs.getString("apellidos"), rs.getString("telefono")));
-					
-					rs.next();
-				}
-				return al;
-			
-			} else {
-				for (int i = 0; i < rows_per_page; i++) {
-					if (rs.getString("nombre")!=null && rs.getString("nombre").toUpperCase().contains(name.toUpperCase()))
-						al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
-								rs.getString("apellidos"), rs.getString("telefono")));
-					rs.next();
-				}
-				return al;
-			
+			} 
+
+			ResultSet rs=ResultSetGen.generateResultSet(params,TABLE_NAME);
+
+			int i=0;
+
+			while (rs.next() && i < ROWS_PER_PAGE) {
+				al.add(new UserModel(rs.getString("email"), rs.getString("nombre"),
+						rs.getString("apellidos"), rs.getString("telefono")));
+				i++;
 			}
+
+			return al;
+
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Method for getting 1 UserModel object from the ResultSet
 	 * based on the user_id given, If it is null or empty, the
@@ -164,21 +161,26 @@ public class UserModel {
 	 * @param user_id user's email
 	 * @return UserModel object, null if error
 	 */
-	public static UserModel getUser(String user_id) {
-		try {
-		if (user_id==null || user_id.equals("")) {
-			rs.first();
-			return new UserModel(rs.getString("email"),rs.getString("password") , rs.getString("nombre"), rs.getString("apellidos"), rs.getString("telefono"));
-		}
+	public static UserModel getUser(Map<String, Object> params) {
+
+		params = params==null
+				? new HashMap<String, Object>()
+				: params;
 		
-		rs.beforeFirst();
-		while (rs.next()) {
-			if (rs.getString("email").toUpperCase().equals(user_id.toUpperCase())) {
-				return new UserModel(rs.getString("email"),rs.getString("password"), rs.getString("nombre"), rs.getString("apellidos"), rs.getString("telefono"));
-			} 
-		}
-		rs.first();
-		return null;
+		try {
+			
+			if (params.isEmpty()) {
+				rs.first();
+				return new UserModel(rs.getString("email"),rs.getString("password") , rs.getString("nombre"), rs.getString("apellidos"), rs.getString("telefono"));
+			}
+
+			ResultSet rs=ResultSetGen.generateResultSet(params,TABLE_NAME);
+
+			if (rs.first()) {
+				return new UserModel(rs.getString("email"),rs.getString("password") , rs.getString("nombre"), rs.getString("apellidos"), rs.getString("telefono"));
+			}
+
+			return null;
 
 		} catch (SQLException e) {
 			// TODO: handle exception
@@ -186,7 +188,7 @@ public class UserModel {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Method for creating users through the
 	 * ResultSet with a UserModel Object
@@ -194,106 +196,105 @@ public class UserModel {
 	 * 
 	 * @param new_user UserModel object
 	 */
-	public static void createUser(UserModel new_user) {
-		String email=new_user.getEmail();
-		
+	public void createUser() {
+		String email=this.getEmail();
+
 		if (email==null||email.equals("")) {
 			throw new IllegalArgumentException("Email cannot be null");
 		}
-		
-		String name=(new_user.getName()!=null)?new_user.getName():"";
-		String last_names=(new_user.getLast_names()!=null)?new_user.getLast_names():"";
-		String phone=(new_user.getPhone_num()!=null)?new_user.getPhone_num():"";
-		String password=(new_user.getPassword()!=null)?new_user.getPassword():"";
+
+		String name=(this.getName()!=null)
+				? this.getName()
+				: "";
+		String last_names=(this.getLast_names()!=null)
+				? this.getLast_names()
+				: "";
+		String phone=(this.getPhone_num()!=null)
+				? this.getPhone_num()
+				: "";
+		String password=(this.getPassword()!=null)
+				? this.getPassword()
+				: "";
 		//TODO Implement BCrypt
-//		String password_hashed=BCrypt.withDefaults().hashToString(12, password.toCharArray());
-		
+		//		String password_hashed=BCrypt.withDefaults().hashToString(12, password.toCharArray());
+
 		try {
 			rs.moveToInsertRow();
-			
+
 			rs.updateString("email", email);
 			rs.updateString("nombre", name);
 			rs.updateString("apellidos", last_names);
 			rs.updateString("telefono", phone);
 			rs.updateString("password", password);
-			
+
 			rs.insertRow();
-			
-//			rs=BDConnector.execStmt("SELECT * FROM users;", conn);
+
+			refreshResultSet();
 		} catch (SQLException e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Method for updating existing users with a given
 	 * UserModel object
 	 * @param new_user UserModel object to be used for the updating process
 	 */
-	public static void updateUser(UserModel new_user) {
-		String email=new_user.getEmail();
-		String name=(new_user.getName()!=null)?new_user.getName():"";
-		String last_names=(new_user.getLast_names()!=null)?new_user.getLast_names():"";
-		String phone=(new_user.getPhone_num()!=null)?new_user.getPhone_num():"";
-		String password=new_user.getPassword();
-
-		if (password==null || (!UserDataChecker.validatePassword(password))) {
-			
-			try {
-				rs.beforeFirst();
-				while (rs.next()) {
-					if (rs.getString("email").equals(email)) {
-						rs.updateString("nombre", name);
-						rs.updateString("apellidos", last_names);
-						rs.updateString("telefono", phone);
-						
-						rs.updateRow();
-						
-						System.out.println("Updated without password");
-						
-						break;
-					}
-				}
-				
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		} else {
-			String password_hashed=BCrypt.withDefaults().hashToString(12, password.toCharArray());
-			
-			try {
-				rs.first();
-				while (rs.next()) {
-					if (rs.getString("email").equals(email)) {
-						rs.updateString("nombre", name);
-						rs.updateString("apellidos", last_names);
-						rs.updateString("telefono", phone);
-						rs.updateString("password", password_hashed);
-						rs.updateRow();
-						rs.first();
-						
-						System.out.println("Updated");
-						
-						break;
-					}
-				}
-				
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+	public void updateUser() {
+		String email=(this.getEmail().equals(""))
+				? null
+				: this.getEmail();
+		if (email==null) {
+			throw new IllegalArgumentException("Name cannot be null");
 		}
 		
+		String name=(this.getName()!=null)
+				? this.getName()
+				: "";
+		String last_names=(this.getLast_names()!=null)
+				? this.getLast_names()
+				: "";
+		String phone=(this.getPhone_num()!=null)
+				? this.getPhone_num()
+				: "";
+		String password=this.getPassword();
+
+
+		Map<String, String> update_fields=new HashMap<String, String>();
+
+		update_fields.put("email", email);
+		update_fields.put("nombre", name);
+		update_fields.put("apellidos", last_names);
+		update_fields.put("telefono", phone);
+		if (password==null || (!UserDataChecker.validatePassword(password)))
+			update_fields.put("password", password);
+
+		Map<String, Object> params=new HashMap<String, Object>();
+
+		params.put("email", email);
+
+		try {
+			ResultSet rs=ResultSetGen.generateResultSet(params, TABLE_NAME);
+			if (rs.first()) {
+				for (Map.Entry<String, String> entry : update_fields.entrySet()) {
+					rs.updateString(entry.getKey(), entry.getValue());
+				}
+
+				rs.updateRow();
+
+				refreshResultSet();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
-	
+
 	/**
-	 * Method for getting the total number
-	 * of rows in the ResultSet
+	 * Method for getting the total number of rows in the ResultSet
 	 * @return number of rows, -1 if error
 	 */
 	public static int getTotalRows() {
@@ -306,7 +307,14 @@ public class UserModel {
 			return -1;
 		}
 	}
-	
+
+	/**
+	 * Method for refreshing the Result Set
+	 */
+	public static void refreshResultSet() {
+		rs=ResultSetGen.generateResultSet(null, TABLE_NAME);
+	}
+
 	/**
 	 * @return the email
 	 */
@@ -410,7 +418,7 @@ public class UserModel {
 		return "UserModel [email=" + email + ", password=" + password + ", token=" + token + ", token_valid_date="
 				+ token_valid_date + ", name=" + name + ", last_names=" + last_names + ", phone_num=" + phone_num + "]";
 	}
-	
-	
-	
+
+
+
 }

@@ -11,7 +11,7 @@ public class Main {
 	public static final Connection conn=BDConnector.connectToBD();
 
 	public static void main(String[] args) {
-		new LoginView();
-//		new MainView("admin@elcampico.org");
+//		new LoginView();
+		new MainView("admin@elcampico.org");
 	}
 }

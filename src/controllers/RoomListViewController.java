@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
@@ -24,7 +26,9 @@ public class RoomListViewController implements ActionListener {
 	private int num_guests;
 	private double price;
 	private int page_num=0;
-	private int total_pages=(int) Math.ceil(RoomModel.getTotalRows()/10)-1;
+	private int total_pages=(int) (Math.ceil(RoomModel.getTotalRows()/10)<0
+			? Math.ceil(RoomModel.getTotalRows()/10)
+			: Math.ceil(RoomModel.getTotalRows()/10)-1);
 	
 	public RoomListViewController(RoomListView view) {
 		super();
@@ -43,7 +47,13 @@ public class RoomListViewController implements ActionListener {
 		JTable table=view.getTable();
 		JScrollPane pane=view.getPane();
 		
-		ArrayList<RoomModel> al=RoomModel.getRoomList(name, price, num_guests, page_num);
+		Map<String, Object> params=new HashMap<String, Object>();
+
+		if (name!=null && !name.equals("")) params.put("nombre", name);
+		if (!(price<=0)) params.put("precio", price);
+		if (!(num_guests<=0)) params.put("numero_maximo_personas", num_guests);
+		
+		ArrayList<RoomModel> al=RoomModel.getRoomList(params, page_num);
 		
 		DefaultTableModel model=new DefaultTableModel();
 		table.setModel(model);
@@ -55,12 +65,12 @@ public class RoomListViewController implements ActionListener {
 		model.addColumn("Precio");
 		model.addColumn("Max. Personas");
 		model.addColumn("Num. Camas");
+		model.addColumn("Modificar");
 		
-//		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); <- this is the devil
 		table.getTableHeader().setReorderingAllowed(false);
 		
 		for (RoomModel roomModel : al) {
-			Object[] row=new Object[7];
+			Object[] row=new Object[8];
 			row[0]=roomModel.getId();
 			row[1]=roomModel.getName();
 			row[2]=roomModel.getDescription();
@@ -68,15 +78,15 @@ public class RoomListViewController implements ActionListener {
 			row[4]=roomModel.getPrice();
 			row[5]=roomModel.getMax_guests();
 			row[6]=roomModel.getNum_beds();
+			row[7]="Editar";
 			model.addRow(row);
 			
 		}
+		
+		table.getColumn("Modificar").setCellRenderer(new ButtonRenderer());
+		table.getColumn("Modificar").setCellEditor(new ButtonEditor(new JCheckBox(), table, null, al));
 				
 		pane.setViewportView(table);
-		
-		// The width is -18 to compensate for the vertical scrollbar
-//		table.setPreferredSize(pane.getMinimumSize());
-		//TODO fix table size
 		
 		table.setPreferredScrollableViewportSize(table.getPreferredSize());
 		
@@ -146,6 +156,7 @@ public class RoomListViewController implements ActionListener {
 			break;
 		case "last_page":
 			page_num=total_pages;
+			System.out.println(total_pages);
 			updatePageTextField();
 			buildTable(name, price, num_guests);
 				

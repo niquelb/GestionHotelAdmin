@@ -3,12 +3,15 @@ package models;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.mariadb.jdbc.Connection;
 
 import main.Main;
 import utils.BDConnector;
+import utils.ResultSetGen;
 
 /**
  * Model class for the rooms table
@@ -25,31 +28,31 @@ public class RoomModel {
 	@NonNull
 	private String name,
 	description;
-	
+
 	/**
 	 * Number of rows for each page
 	 */
 	public final static int ROWS_PER_PAGE=10;
-	
+
 	/**
 	 * Maximum price allowed per room
 	 */
 	public final static double MAX_PRICE=999;
-	
+
 	/**
 	 * Maximum number of guests allowed per room
 	 */
 	public final static int MAX_GUESTS=10;
-	
+
 	/**
-	 * Connection object
+	 * DB Table name
 	 */
-	private static Connection conn=Main.conn;
-	
+	public final static String TABLE_NAME="habitaciones";
+
 	/**
 	 * ResultSet with all of the rooms
 	 */
-	private static ResultSet rs=BDConnector.execStmt("SELECT * FROM habitaciones;", conn);
+	private static ResultSet rs=ResultSetGen.generateResultSet(null, TABLE_NAME);
 
 	/**
 	 * Default constructor
@@ -92,7 +95,7 @@ public class RoomModel {
 		this.name = name;
 		this.description = description;
 	}
-	
+
 	/**
 	 * Method for getting an ArrayList with all rooms or with
 	 * specified filters
@@ -103,75 +106,52 @@ public class RoomModel {
 	 * @param page_num page_number ! MUST START FROM 0 ! (First page is number 0, second number 1 etc.)
 	 * @return ArrayList with RoomModel objects, null if error
 	 */
-	public static ArrayList<RoomModel> getRoomList(String name, double price, int num_guests, int page_num) {
+	public static ArrayList<RoomModel> getRoomList(Map<String, Object> params, int page_num) {
 		ArrayList<RoomModel> al=new ArrayList<>();
-		page_num=page_num*ROWS_PER_PAGE+1;
-		
-		int rows_per_page=(getTotalRows()<ROWS_PER_PAGE)?getTotalRows():ROWS_PER_PAGE;
-		
-		name=(name==null)?"":name;
-		price=(price==0.0||price>MAX_PRICE)?MAX_PRICE:price;
-		num_guests=(num_guests==0||num_guests>MAX_GUESTS)?MAX_GUESTS:num_guests;
-		
+		page_num=page_num*ROWS_PER_PAGE;
+
+		params = params==null
+				? new HashMap<String, Object>()
+						: params;
+		int rows_per_page=getTotalRows();
+
 		try {
-			rs.absolute(page_num);
-			if (name.equals("")&&price>=MAX_PRICE&&num_guests>=MAX_GUESTS) {
-				for (int i = 0; i < rows_per_page; i++) {
+			if (params.isEmpty()) {
+				rs.absolute(page_num);
+
+				int i = 0;
+
+				while (rs.next() && i < rows_per_page) {
 					al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
 							rs.getInt("numero_camas"), rs.getDouble("precio"),
 							rs.getString("nombre"), rs.getString("descripcion")));
-					
-					rs.next();
+					i++;
 				}
-				
-				return al;
-			} else if (!name.equals("")) {
-				for (int i = 0; i < rows_per_page; i++) {
-					if (rs.getString("nombre")!=null && rs.getString("nombre").toUpperCase().contains(name.toUpperCase()))
-						al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
-								rs.getInt("numero_camas"), rs.getDouble("precio"),
-								rs.getString("nombre"), rs.getString("descripcion")));
-					rs.next();
-				}
-				return al;
-			} else if (price<MAX_PRICE&&num_guests<MAX_GUESTS) {
-				for (int i = 0; i < rows_per_page; i++) {
-					if (
-							(rs.getInt("precio")<=price) &&
-							(rs.getInt("numero_maximo_personas")>=num_guests)
-							)
-						al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
-								rs.getInt("numero_camas"), rs.getDouble("precio"),
-								rs.getString("nombre"), rs.getString("descripcion")));
-					rs.next();
-				}
-				return al;
-			} else if (price<MAX_PRICE) {
-				for (int i = 0; i < rows_per_page; i++) {
-					if (rs.getInt("precio")<=price)
-						al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
-								rs.getInt("numero_camas"), rs.getDouble("precio"),
-								rs.getString("nombre"), rs.getString("descripcion")));
-					rs.next();
-				}
-				return al;
-			} else {
-				for (int i = 0; i < rows_per_page; i++) {
-					if (rs.getInt("numero_maximo_personas")>=num_guests)	
-						al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
-								rs.getInt("numero_camas"), rs.getDouble("precio"),
-								rs.getString("nombre"), rs.getString("descripcion")));
-					rs.next();
-				}
+
 				return al;
 			}
-		} catch (Exception e) {
+
+			ResultSet rs=ResultSetGen.generateResultSet(params,TABLE_NAME); //TODO make price and max-guests ranges instead of fixed values
+
+			int i=0;
+
+			while (rs.next() && i < rows_per_page) {
+				al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
+						rs.getInt("numero_camas"), rs.getDouble("precio"),
+						rs.getString("nombre"), rs.getString("descripcion")));
+				i++;
+			}
+
+			return al;
+
+
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Method for getting 1 RoomModel object from the ResultSet
 	 * based on the room name given (NOT the "id" field from the DB),
@@ -180,26 +160,31 @@ public class RoomModel {
 	 * @param room_id Room name for filtering (NOT the "id" field from the DB)
 	 * @return RoomModel object, null if error
 	 */
-	public static RoomModel getRoom(String room_id) {
+	public static RoomModel getRoom(Map<String, Object> params) { //TODO update JavaDoc
 		try  {
-			if (room_id==null || room_id.equals("")) {
+			
+			params = params==null
+					? new HashMap<String, Object>()
+							: params;
+
+			if (params.isEmpty()) {
 				rs.first();
 				return new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
 						rs.getInt("numero_camas"), rs.getDouble("precio"),
 						rs.getString("nombre"), rs.getString("descripcion"));
 			}
 			
-			rs.beforeFirst();
-			while (rs.next()) {
-				if (rs.getString("nombre").toUpperCase().equals(room_id.toUpperCase())) {
-					return new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
-							rs.getInt("numero_camas"), rs.getDouble("precio"),
-							rs.getString("nombre"), rs.getString("descripcion"));
-				}
+			ResultSet rs=ResultSetGen.generateResultSet(params,TABLE_NAME);
+
+			if (rs.first()) {
+				return new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
+						rs.getInt("numero_camas"), rs.getDouble("precio"),
+						rs.getString("nombre"), rs.getString("descripcion"));
 			}
-			
+
 			return null;
-		
+			
+
 		} catch (SQLException e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -207,123 +192,107 @@ public class RoomModel {
 		}
 
 	}
-	
-	/**
-	 * Method for getting 1 RoomModel object through the
-	 * ResultSet with a given ID, if none is given it returns
-	 * the first entry
-	 * @param room_id  Room ID
-	 * @return RoomModel object
-	 */
-	public static RoomModel getRoom(int room_id) {
-		room_id=(room_id<0)?0:room_id;
-		
-		try  {
-			if (room_id==0) {
-				System.out.println("first");
-				rs.first();
-				return new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
-						rs.getInt("numero_camas"), rs.getDouble("precio"),
-						rs.getString("nombre"), rs.getString("descripcion"));
-			}
-			
-			rs.beforeFirst();
-			while (rs.next()) {
-				if (rs.getInt("id")==room_id) {
-					return new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
-							rs.getInt("numero_camas"), rs.getDouble("precio"),
-							rs.getString("nombre"), rs.getString("descripcion"));
-				}
-			}
-			
-			return null;
-		
-		} catch (SQLException e) {
-			// TODO: handle exception
-			e.printStackTrace();
-			return null;
-		}
 
-	}
-	
 	/**
 	 * Method for creating a room through the
 	 * ResultSet using a RoomModel object
 	 * !! OBJECT CANNOT HAVE NULL NAME !!
 	 * @param new_room RoomModel object
 	 */
-	public static void createRoom(RoomModel new_room) {
-		String name=(new_room.getName().equals(""))?null:new_room.getName();
+	public void createRoom() {
+		String name=(this.getName().equals(""))
+				? null
+				: this.getName();
 		if (name==null) {
 			throw new IllegalArgumentException("Name cannot be null");
 		}
+
+		String description=this.getDescription();
+		int quantity=this.getQuantity();
+		double price=this.getPrice();
+		int max_guests=this.getMax_guests();
+		int num_beds=this.getNum_beds();
 		
-		String description=new_room.getDescription();
-		int quantity=new_room.getQuantity();
-		double price=new_room.getPrice();
-		int max_guests=new_room.getMax_guests();
-		int num_beds=new_room.getNum_beds();
-		
+
 		try {
 			rs.moveToInsertRow();
-			
+
 			rs.updateString("nombre", name);
 			rs.updateString("descripcion", description);
 			rs.updateInt("cantidad", quantity);
 			rs.updateDouble("precio", price);
 			rs.updateInt("numero_maximo_personas", max_guests);
 			rs.updateInt("numero_camas", num_beds);
-			
+
 			rs.insertRow();
-//			rs=BDConnector.execStmt("SELECT * FROM habitaciones;", conn);
+			//			rs=BDConnector.execStmt("SELECT * FROM habitaciones;", conn);
 		} catch (SQLException e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Method for updating existing rooms through the ResultSet
 	 * using a RoomModel object
 	 * !! OBJECT CANNOT HAVE NULL NAME !!
 	 * @param new_room RoomModel object
 	 */
-	public static void updateRoom(RoomModel new_room) {
-		String name=(new_room.getName().equals(""))?null:new_room.getName();
+	public void updateRoom() {
+		String name=(this.getName().equals(""))
+				? null
+				: this.getName();
 		if (name==null) {
 			throw new IllegalArgumentException("Name cannot be null");
 		}
+
+		String description=this.getDescription();
+		int quantity=this.getQuantity();
+		double price=this.getPrice();
+		int max_guests=this.getMax_guests();
+		int num_beds=this.getNum_beds();
 		
-		String description=new_room.getDescription();
-		int quantity=new_room.getQuantity();
-		double price=new_room.getPrice();
-		int max_guests=new_room.getMax_guests();
-		int num_beds=new_room.getNum_beds();
+		Map<String, Object> update_fields=new HashMap<String, Object>();
 		
+		update_fields.put("descripcion", description);
+		update_fields.put("cantidad", quantity);
+		update_fields.put("precio", price);
+		update_fields.put("numero_maximo_personas", max_guests);
+		update_fields.put("numero_camas", num_beds);
+		
+		Map<String, Object> params=new HashMap<String, Object>();
+
+		params.put("nombre", name);
+
 		try {
-			rs.beforeFirst();
-			while (rs.next()) {
-				if (rs.getString("nombre").equals(name)) {
-					rs.updateString("nombre", name);
-					rs.updateString("descripcion", description);
-					rs.updateInt("cantidad", quantity);
-					rs.updateDouble("precio", price);
-					rs.updateInt("numero_maximo_personas", max_guests);
-					rs.updateInt("numero_camas", num_beds);
-					
-					rs.updateRow();
-					
-					System.out.println("Updated successfully");
-					
-					break;
+			ResultSet rs=ResultSetGen.generateResultSet(params, TABLE_NAME);
+			if (rs.first()) {
+				for (Map.Entry<String, Object> entry : update_fields.entrySet()) {
+					if (entry.getValue() instanceof String) {
+						rs.updateString(entry.getKey(), (String) entry.getValue());
+						break;
+					}
+					if (entry.getValue() instanceof Integer) {
+						rs.updateInt(entry.getKey(), (Integer) entry.getValue());
+						break;
+					}
+					if (entry.getValue() instanceof Double) {
+						rs.updateDouble(entry.getKey(), (Double) entry.getValue());
+						break;
+					}
 				}
+
+				rs.updateRow();
+
+				refreshResultSet();
 			}
+			
 		} catch (SQLException e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Method for getting the total number
 	 * of rows in the ResultSet
@@ -332,12 +301,20 @@ public class RoomModel {
 	public static int getTotalRows() {
 		try {
 			rs.last();
+			System.out.println("------------------>"+rs.getString("nombre"));
 			return rs.getRow();
 		} catch (SQLException e) {
 			// TODO: handle exception
 			e.printStackTrace();
 			return -1;
 		}
+	}
+	
+	/**
+	 * Method for refreshing the Result Set
+	 */
+	public static void refreshResultSet() {
+		rs=ResultSetGen.generateResultSet(null, TABLE_NAME);
 	}
 
 	/**
@@ -437,7 +414,7 @@ public class RoomModel {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	
-	
+
+
+
 }

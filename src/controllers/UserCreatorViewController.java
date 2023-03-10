@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -85,7 +87,11 @@ public class UserCreatorViewController implements ActionListener, MouseListener{
 				break;
 			}
 			
-			if (UserModel.getUser(email)!=null) {
+			Map<String, Object> params=new HashMap<String, Object>();
+			
+			params.put("email", email);
+			
+			if (UserModel.getUser(params)!=null) {
 				JOptionPane.showMessageDialog(view,
 					    "Este email ya esta registrado, por favor, elija otro.",
 					    "Error",
@@ -106,7 +112,7 @@ public class UserCreatorViewController implements ActionListener, MouseListener{
 			
 			if (n==0) {
 				System.out.println("Creation Start");
-				UserModel.createUser(new UserModel(email, password, name, last_names, phone));
+				new UserModel(email, password, name, last_names, phone).createUser();
 				view.dispose();
 			} else {
 				view.dispose();

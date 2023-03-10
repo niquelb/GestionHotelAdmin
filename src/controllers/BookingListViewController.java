@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.time.DateTimeException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
@@ -25,14 +27,15 @@ public class BookingListViewController implements ActionListener{
 	private final BookingListView view;
 	
 	private int page_num=0;
-	private String user_id;
+	private String logged_in_user, user_id;
+	private Date start_date, end_date;
 
 	private int total_pages=(int) Math.ceil(BookingModel.getTotalRows()/10)-1;
 	
 	public BookingListViewController(BookingListView view, String user_id) {
 		super();
 		this.view = view;
-		this.user_id=user_id;
+		this.logged_in_user=user_id;
 		
 		try {
 			buildTable(null, null, null);
@@ -45,7 +48,13 @@ public class BookingListViewController implements ActionListener{
 		
 		ArrayList<BookingModel> al=new ArrayList<>();
 		
-		al=BookingModel.getBookingList(user_id, start_date, end_date, page_num);
+		Map<String, Object> params=new HashMap<String, Object>();
+		
+		if (user_id!=null && !user_id.equals("")) params.put("user_id", user_id);
+		if (start_date!=null) params.put("fecha_entrada", start_date);
+		if (end_date!=null) params.put("fecha_salida", end_date);
+		
+		al=BookingModel.getBookingList(params, page_num);
 		
 		DefaultTableModel model=new DefaultTableModel();
 		table.setModel(model);
@@ -92,18 +101,16 @@ public class BookingListViewController implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
 		case "create_booking":
-			new BookingCreatorView(user_id);
+			new BookingCreatorView(logged_in_user);
 			
 			break;
 		case "submit":
-			String user_id=(view.getTextFieldUser_id().getText().equals("")?null:view.getTextFieldUser_id().getText());
-			Date start_date;
+			user_id=(view.getTextFieldUser_id().getText().equals("")?null:view.getTextFieldUser_id().getText());
 			try {
 				start_date=StringToDateConverter.stringToDate(view.getTextFieldStart_date().getText());
 			} catch (DateTimeException e2) {
 				start_date=null;
 			}
-			Date end_date;
 			try {
 				end_date=StringToDateConverter.stringToDate(view.getTextFieldEnd_date().getText());
 			} catch (DateTimeException e2) {
@@ -120,11 +127,16 @@ public class BookingListViewController implements ActionListener{
 			}
 			
 			view.getBtnClear().setEnabled(true);
+			
+			logged_in_user=null;
+			start_date=null;
+			end_date=null;
+			
 			break;
 			
 		case "clear":
 			view.getBtnClear().setEnabled(false);
-			user_id=null;
+			logged_in_user=null;
 			start_date=null;
 			end_date=null;
 			
@@ -137,10 +149,64 @@ public class BookingListViewController implements ActionListener{
 			} catch (Exception e1) {}
 			
 			break;
+		
+		/**
+		 * Page Navigation
+		 */
+		case "prev_page":
+			page_num=!(page_num==0)?--page_num:0;
+			updatePageTextField();
+			try {
+				buildTable(user_id, start_date, end_date);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			break;
+		case "next_page":
+			page_num=!(page_num==total_pages)?++page_num:total_pages;
+			updatePageTextField();
+			try {
+				buildTable(user_id, start_date, end_date);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			break;
+		case "first_page":
+			page_num=0;
+			updatePageTextField();
+			try {
+				buildTable(user_id, start_date, end_date);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			break;
+		case "last_page":
+			System.out.println(total_pages);
+			page_num=total_pages;
+			updatePageTextField();
+			try {
+				buildTable(user_id, start_date, end_date);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}			
+			
+			break;
 		default:
 			System.err.println("Unexpected Value");
 		}
 		
+	}
+	
+
+	public void updatePageTextField() {
+		view.getTextFieldCurrentPage().setText(String.valueOf(page_num+1));
 	}
 
 }

@@ -9,6 +9,8 @@ import java.sql.Date;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -38,14 +40,16 @@ public class BookingCreatorViewController implements ActionListener, MouseListen
 			String user_id=(String.valueOf(view.getTextFieldUser_id().getText()).equals(""))?null:String.valueOf(view.getTextFieldUser_id().getText());
 			Date start_date;
 			try {
-				start_date=StringToDateConverter.stringToDate(view.getTextFieldStart_date().getText());
+//				start_date=StringToDateConverter.stringToDate(view.getTextFieldStart_date().getText());
+				start_date=(java.sql.Date) view.getdPStart_date().getModel().getValue();
 			} catch (DateTimeException e2) {
 				start_date=null;
 			}
 			
 			Date end_date;
 			try {
-				end_date=StringToDateConverter.stringToDate(view.getTextFieldEnd_date().getText());
+//				end_date=StringToDateConverter.stringToDate(view.getTextFieldEnd_date().getText());
+				end_date=(java.sql.Date) view.getdPEnd_date().getModel().getValue();
 			} catch (DateTimeException e2) {
 				end_date=null;
 			}
@@ -100,8 +104,14 @@ public class BookingCreatorViewController implements ActionListener, MouseListen
 			}
 			
 			try {
-				BookingModel.createBooking(new BookingModel(num_adults, num_children, start_date, end_date, user_id));
-				BookingModel bm=BookingModel.getBooking(user_id, start_date);
+				new BookingModel(num_adults, num_children, start_date, end_date, user_id).createBooking();
+				
+				Map<String, Object> params=new HashMap<String, Object>();
+				
+				params.put("user_id", user_id);
+				params.put("fecha_entrada", start_date);
+				
+				BookingModel bm=BookingModel.getBooking(params);
 				
 				new BookingRoomCreatorView(bm.getId());
 			} catch (Exception e1) {

@@ -58,6 +58,7 @@ public class RoomListView extends JPanel {
 		lblTitle.setFont(new Font("Roboto Black", Font.BOLD, 24));
 		
 		JLabel lblName = new JLabel("Nombre de la Habitacion");
+		lblName.setHorizontalAlignment(SwingConstants.CENTER);
 		lblName.setForeground(Color.WHITE);
 		lblName.setFont(new Font("Roboto Light", Font.PLAIN, 18));
 		
@@ -65,6 +66,7 @@ public class RoomListView extends JPanel {
 		textFieldName.setColumns(10);
 		
 		JLabel lblPrice = new JLabel("Precio Maximo");
+		lblPrice.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPrice.setForeground(Color.WHITE);
 		lblPrice.setFont(new Font("Roboto Light", Font.PLAIN, 18));
 		
@@ -92,27 +94,22 @@ public class RoomListView extends JPanel {
 						.addGroup(gl_filters_panel.createSequentialGroup()
 							.addGap(10)
 							.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblName)
 								.addGroup(gl_filters_panel.createSequentialGroup()
-									.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblPrice)
-										.addGroup(gl_filters_panel.createSequentialGroup()
-											.addGap(10)
-											.addComponent(textFieldPrice, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+									.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING, false)
+										.addComponent(textFieldPrice)
+										.addComponent(lblPrice, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 									.addGap(18)
-									.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
-										.addGroup(gl_filters_panel.createSequentialGroup()
-											.addGap(10)
-											.addComponent(textFieldNum_guests, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE))
-										.addComponent(lblNum_guests)))
-								.addGroup(gl_filters_panel.createSequentialGroup()
-									.addGap(10)
-									.addComponent(textFieldName, GroupLayout.PREFERRED_SIZE, 223, GroupLayout.PREFERRED_SIZE))))
+									.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING, false)
+										.addComponent(textFieldNum_guests)
+										.addComponent(lblNum_guests, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+								.addGroup(gl_filters_panel.createParallelGroup(Alignment.TRAILING, false)
+									.addComponent(lblName, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addComponent(textFieldName, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE))))
 						.addComponent(lblTitle))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnSubmit, GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
-						.addComponent(btnClear, GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))
+						.addComponent(btnSubmit, GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+						.addComponent(btnClear, GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_filters_panel.setVerticalGroup(
@@ -123,22 +120,21 @@ public class RoomListView extends JPanel {
 						.addComponent(btnSubmit, GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
 						.addComponent(lblTitle))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_filters_panel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblName)
-						.addComponent(btnClear, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
+					.addGroup(gl_filters_panel.createParallelGroup(Alignment.TRAILING)
+						.addComponent(btnClear, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblName))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(textFieldName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGap(11)
 					.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_filters_panel.createSequentialGroup()
 							.addComponent(lblPrice, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(textFieldPrice, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_filters_panel.createSequentialGroup()
-							.addComponent(lblNum_guests, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(textFieldNum_guests, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(40, Short.MAX_VALUE))
+							.addGroup(gl_filters_panel.createParallelGroup(Alignment.BASELINE)
+								.addComponent(textFieldPrice, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(textFieldNum_guests, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+						.addComponent(lblNum_guests, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(15, Short.MAX_VALUE))
 		);
 		filters_panel.setLayout(gl_filters_panel);
 		
@@ -158,11 +154,9 @@ public class RoomListView extends JPanel {
 		list_panel.add(bottom_navi, BorderLayout.SOUTH);
 		
 		btnFirstPage = new JButton("<<");
-		btnFirstPage.setActionCommand("first_page");
 		bottom_navi.add(btnFirstPage);
 		
 		btnPrevPage = new JButton("<");
-		btnPrevPage.setActionCommand("prev_page");
 		bottom_navi.add(btnPrevPage);
 		
 		textFieldCurrentPage = new JTextField();
@@ -173,11 +167,9 @@ public class RoomListView extends JPanel {
 		bottom_navi.add(textFieldCurrentPage);
 		
 		btnNextPage = new JButton(">");
-		btnNextPage.setActionCommand("next_page");
 		bottom_navi.add(btnNextPage);
 		
 		btnLastPage = new JButton(">>");
-		btnLastPage.setActionCommand("last_page");
 		bottom_navi.add(btnLastPage);
 		
 		JPanel top_panel = new JPanel();
@@ -190,6 +182,16 @@ public class RoomListView extends JPanel {
 		top_panel.add(btnCreate_room);
 
 		controller=new RoomListViewController(this);
+		
+		btnFirstPage.addActionListener(controller);
+		btnFirstPage.setActionCommand("first_page");
+		btnPrevPage.addActionListener(controller);
+		btnPrevPage.setActionCommand("prev_page");
+		btnNextPage.addActionListener(controller);
+		btnNextPage.setActionCommand("next_page");
+		btnLastPage.addActionListener(controller);
+		btnLastPage.setActionCommand("last_page");
+		
 		ComponentInit.setButtonProperties(btnSubmit, controller);
 		btnSubmit.setActionCommand("submit");
 		ComponentInit.setButtonProperties(btnClear, controller);

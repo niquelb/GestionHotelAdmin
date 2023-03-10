@@ -69,6 +69,24 @@ public class MainView extends JFrame {
 		
 		side_panel.setPreferredSize(new Dimension(75, main_panel.getHeight()));
 		
+		JButton btnChat = new JButton("Chat");
+		GroupLayout gl_side_panel = new GroupLayout(side_panel);
+		gl_side_panel.setHorizontalGroup(
+			gl_side_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_side_panel.createSequentialGroup()
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addComponent(btnChat, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
+					.addGap(37))
+		);
+		gl_side_panel.setVerticalGroup(
+			gl_side_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_side_panel.createSequentialGroup()
+					.addContainerGap(689, Short.MAX_VALUE)
+					.addComponent(btnChat)
+					.addContainerGap())
+		);
+		side_panel.setLayout(gl_side_panel);
+		
 		center_panel.setPreferredSize(getMinimumSize());
 		navi_panel.setPreferredSize(new Dimension(220, main_panel.getHeight()));
 		
@@ -127,6 +145,8 @@ public class MainView extends JFrame {
 		btnBookings.setActionCommand("bookings");
 		ComponentInit.setButtonProperties(btnLog_out, controller);
 		btnLog_out.setActionCommand("log_out");
+		ComponentInit.setButtonProperties(btnChat, controller);
+		btnChat.setActionCommand("chat");
 		
 	}
 	
@@ -158,5 +178,4 @@ public class MainView extends JFrame {
 	public void switchMainContent(String content_id) {
 		((CardLayout) center_panel.getLayout()).show(center_panel, content_id);
 	}
-	
 }

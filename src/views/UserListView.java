@@ -20,191 +20,162 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
 
 public class UserListView extends JPanel {
 	
 	private final UserListViewController controller=new UserListViewController(this);
 	
-	private JTable table;
 	private JScrollPane pane;
-	private JPanel filters_panel;
+	private JTable table;
 	
+	private JTextField textFieldCurrentPage;
 	private JTextField textFieldName;
 	private JTextField textFieldEmail;
-	private JButton btnSubmitFilters;
-	private JButton btnClearFilters;
-	private JButton btnAddUser;
 	
-	/**
-	 * Page Selector
-	 */
-	private JTextField textFieldCurrentPage;
-	private JButton btnPrevPage;
-	private JButton btnFirstPage;
-	private JButton btnNextPage;
-	private JButton btnLastPage;
+	private JButton btnClearFilters;
+	private JButton btnSubmitFilters;
+	private JButton btnCreate_user;
 	
 	/**
 	 * Create the panel.
 	 */
 	public UserListView() {
-		setBackground(new Color(45, 45, 45));	
-		table=new JTable();
-		pane=new JScrollPane();
-		filters_panel = new JPanel();
-		filters_panel.setForeground(new Color(255, 255, 255));
+		setBackground(new Color(45, 45, 45));
+		setLayout(new BorderLayout(0, 0));
+		
+		JPanel filters_panel = new JPanel();
+		filters_panel.setPreferredSize(new Dimension(this.getWidth(), 175));
 		filters_panel.setBackground(new Color(45, 45, 45));
-		
-		GroupLayout gl_filters_panel = new GroupLayout(filters_panel);
-		
-		filters_panel.setLayout(gl_filters_panel);
-		setLayout(null);
-
-		add(pane);
-		add(filters_panel);
-		
-		pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		pane.setBounds(10, 254, 706, 200);
-		
-		pane.setBackground(Color.DARK_GRAY);
-		pane.setForeground(new Color(45, 45, 45));
-		
-		filters_panel.setBounds(10, 11, 706, 142);
+		add(filters_panel, BorderLayout.NORTH);
 		
 		JLabel lblTitle = new JLabel("Refinar Busqueda");
-		lblTitle.setForeground(new Color(255, 255, 255));
+		lblTitle.setForeground(Color.WHITE);
 		lblTitle.setFont(new Font("Roboto Black", Font.BOLD, 24));
 		
-		JLabel lblName = new JLabel("Nombre");
-		lblName.setForeground(new Color(255, 255, 255));
-		lblName.setFont(new Font("Roboto Light", Font.PLAIN, 18));
+		btnClearFilters = new JButton("Limpiar");
+		btnClearFilters.setEnabled(false);
+		btnClearFilters.setActionCommand("clear");
 		
-		JLabel lblEmail = new JLabel("Email");
-		lblEmail.setForeground(new Color(255, 255, 255));
-		lblEmail.setFont(new Font("Roboto Light", Font.PLAIN, 18));
+		btnSubmitFilters = new JButton("Filtrar");
+		btnSubmitFilters.setActionCommand("filter");
+		
+		JLabel lblName = new JLabel("Nombre");
+		lblName.setHorizontalAlignment(SwingConstants.CENTER);
+		lblName.setForeground(Color.WHITE);
+		lblName.setFont(new Font("Roboto Light", Font.PLAIN, 18));
 		
 		textFieldName = new JTextField();
 		textFieldName.setColumns(10);
 		
+		JLabel lblEmail = new JLabel("Email");
+		lblEmail.setHorizontalAlignment(SwingConstants.CENTER);
+		lblEmail.setForeground(Color.WHITE);
+		lblEmail.setFont(new Font("Roboto Light", Font.PLAIN, 18));
+		
 		textFieldEmail = new JTextField();
 		textFieldEmail.setColumns(10);
-		
-		btnSubmitFilters = new JButton("Filtrar");
-		ComponentInit.setButtonProperties(btnSubmitFilters,controller);
-		btnSubmitFilters.setActionCommand("filter");
-		
-		btnClearFilters = new JButton("Limpiar");
-		ComponentInit.setButtonProperties(btnClearFilters,controller);
-		btnClearFilters.setActionCommand("clear");
-		btnClearFilters.setEnabled(false);
-		
+		GroupLayout gl_filters_panel = new GroupLayout(filters_panel);
 		gl_filters_panel.setHorizontalGroup(
 			gl_filters_panel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_filters_panel.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblTitle)
 						.addGroup(gl_filters_panel.createSequentialGroup()
-							.addGap(10)
 							.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblName)
-								.addComponent(lblEmail))
-							.addGap(18)
-							.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING, false)
-								.addComponent(textFieldEmail)
-								.addComponent(textFieldName, GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE))
-							.addGap(47)
+								.addComponent(lblTitle)
+								.addComponent(lblName, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
+								.addComponent(textFieldName, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE))
+							.addGap(156)
 							.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnClearFilters, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-								.addComponent(btnSubmitFilters, GroupLayout.PREFERRED_SIZE, 163, GroupLayout.PREFERRED_SIZE))))
-					.addContainerGap(149, Short.MAX_VALUE))
+								.addComponent(btnClearFilters, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
+								.addComponent(btnSubmitFilters, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)))
+						.addComponent(lblEmail, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
+						.addComponent(textFieldEmail, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap())
 		);
 		gl_filters_panel.setVerticalGroup(
 			gl_filters_panel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_filters_panel.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(lblTitle)
+					.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
+						.addComponent(btnSubmitFilters, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(lblTitle, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_filters_panel.createSequentialGroup()
-							.addComponent(lblName)
-							.addGap(18)
-							.addComponent(lblEmail))
+							.addComponent(btnClearFilters, GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+							.addGap(98))
 						.addGroup(gl_filters_panel.createSequentialGroup()
-							.addGroup(gl_filters_panel.createParallelGroup(Alignment.TRAILING)
-								.addGroup(gl_filters_panel.createSequentialGroup()
-									.addComponent(textFieldName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addGap(7))
-								.addGroup(gl_filters_panel.createSequentialGroup()
-									.addComponent(btnClearFilters, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED)))
-							.addGroup(gl_filters_panel.createParallelGroup(Alignment.LEADING)
-								.addComponent(textFieldEmail, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnSubmitFilters, Alignment.TRAILING))))
-					.addContainerGap(34, Short.MAX_VALUE))
+							.addComponent(lblName, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(textFieldName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(lblEmail, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(textFieldEmail, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addGap(22))))
 		);
+		filters_panel.setLayout(gl_filters_panel);
 		
-		btnAddUser = new JButton("AÑADIR USUARIO");
-		btnAddUser.setBounds(10, 164, 706, 29);
-		ComponentInit.setButtonProperties(btnAddUser, controller);
-		btnAddUser.setActionCommand("add_user");
-		add(btnAddUser);
+		JPanel list_panel = new JPanel();
+		add(list_panel, BorderLayout.CENTER);
+		list_panel.setLayout(new BorderLayout(0, 0));
 		
-		JPanel page_selector_panel = new JPanel();
-		page_selector_panel.setBackground(new Color(45, 45, 45));
-		page_selector_panel.setBounds(10, 204, 706, 39);
-		add(page_selector_panel);
+		JPanel top_panel = new JPanel();
+		top_panel.setBackground(new Color(45, 45, 45));
+		list_panel.add(top_panel, BorderLayout.NORTH);
+		
+		btnCreate_user = new JButton("Crear Usuario");
+		btnCreate_user.setPreferredSize(new Dimension(250, 20));
+		btnCreate_user.setActionCommand("add_user");
+		top_panel.add(btnCreate_user);
+		
+		JPanel bottom_navi = new JPanel();
+		bottom_navi.setPreferredSize(new Dimension(0, 100));
+		bottom_navi.setBackground(new Color(45, 45, 45));
+		list_panel.add(bottom_navi, BorderLayout.SOUTH);
+		
+		JButton btnFirstPage = new JButton("<<");
+		btnFirstPage.setActionCommand("first_page");
+		bottom_navi.add(btnFirstPage);
+		
+		JButton btnPrevPage = new JButton("<");
+		btnPrevPage.setActionCommand("prev_page");
+		bottom_navi.add(btnPrevPage);
 		
 		textFieldCurrentPage = new JTextField();
-		textFieldCurrentPage.setEditable(false);
+		textFieldCurrentPage.setText("1");
 		textFieldCurrentPage.setHorizontalAlignment(SwingConstants.CENTER);
+		textFieldCurrentPage.setEditable(false);
 		textFieldCurrentPage.setColumns(10);
-		textFieldCurrentPage.setText(String.valueOf(1));
+		bottom_navi.add(textFieldCurrentPage);
 		
-		btnPrevPage = new JButton("<");
-		btnFirstPage = new JButton("<<");
-		btnNextPage = new JButton(">");
-		btnLastPage = new JButton(">>");
-		
-		ComponentInit.setButtonProperties(btnPrevPage, controller);
-		btnPrevPage.setActionCommand("prev_page");
-		ComponentInit.setButtonProperties(btnFirstPage, controller);
-		btnFirstPage.setActionCommand("first_page");
-		ComponentInit.setButtonProperties(btnNextPage, controller);
+		JButton btnNextPage = new JButton(">");
 		btnNextPage.setActionCommand("next_page");
-		ComponentInit.setButtonProperties(btnLastPage, controller);
+		bottom_navi.add(btnNextPage);
+		
+		JButton btnLastPage = new JButton(">>");
 		btnLastPage.setActionCommand("last_page");
+		bottom_navi.add(btnLastPage);
 		
-		GroupLayout gl_page_selector_panel = new GroupLayout(page_selector_panel);
-		gl_page_selector_panel.setHorizontalGroup(
-			gl_page_selector_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_page_selector_panel.createSequentialGroup()
-					.addGap(204)
-					.addComponent(btnFirstPage)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnPrevPage, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(textFieldCurrentPage, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnNextPage, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnLastPage, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(204, Short.MAX_VALUE))
-		);
-		gl_page_selector_panel.setVerticalGroup(
-			gl_page_selector_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_page_selector_panel.createSequentialGroup()
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGroup(gl_page_selector_panel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(textFieldCurrentPage, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnPrevPage)
-						.addComponent(btnFirstPage)
-						.addComponent(btnNextPage)
-						.addComponent(btnLastPage))
-					.addGap(8))
-		);
-		page_selector_panel.setLayout(gl_page_selector_panel);
+		pane= new JScrollPane(table,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		list_panel.add(pane, BorderLayout.CENTER);
+		table=new JTable();
 		
+		btnFirstPage.addActionListener(controller);
+		btnFirstPage.setActionCommand("first_page");
+		btnPrevPage.addActionListener(controller);
+		btnPrevPage.setActionCommand("prev_page");
+		btnNextPage.addActionListener(controller);
+		btnNextPage.setActionCommand("next_page");
+		btnLastPage.addActionListener(controller);
+		btnLastPage.setActionCommand("last_page");
+
+		ComponentInit.setButtonProperties(btnClearFilters, controller);
+		ComponentInit.setButtonProperties(btnSubmitFilters, controller);
+		ComponentInit.setButtonProperties(btnCreate_user, controller);
 		controller.buildTable(null, null);
 	}
 
@@ -253,8 +224,8 @@ public class UserListView extends JPanel {
 	/**
 	 * @return the btnAddUser
 	 */
-	public JButton getBtnAddUser() {
-		return btnAddUser;
+	public JButton getBtnCreate_user() {
+		return btnCreate_user;
 	}
 
 	/**
@@ -309,8 +280,8 @@ public class UserListView extends JPanel {
 	/**
 	 * @param btnAddUser the btnAddUser to set
 	 */
-	public void setBtnAddUser(JButton btnAddUser) {
-		this.btnAddUser = btnAddUser;
+	public void setBtnCreate_user(JButton btnAddUser) {
+		this.btnCreate_user = btnAddUser;
 	}
 
 	/**
@@ -319,6 +290,4 @@ public class UserListView extends JPanel {
 	public void setTextFieldCurrentPage(JTextField textFieldCurrentPage) {
 		this.textFieldCurrentPage = textFieldCurrentPage;
 	}
-
-	
 }

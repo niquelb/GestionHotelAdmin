@@ -8,6 +8,9 @@ import javax.swing.border.LineBorder;
 
 import controllers.BookingCreatorViewController;
 import controllers.RoomCreatorViewController;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.SqlDateModel;
 import utils.ComponentInit;
 
 import javax.swing.GroupLayout;
@@ -26,10 +29,19 @@ public class BookingCreatorView extends JFrame {
 	
 	private JPanel pane;
 	private JTextField textFieldUser_id;
-	private JTextField textFieldStart_date;
-	private JTextField textFieldEnd_date;
+//	private JTextField dPStart_date;
+//	private JTextField dPEnd_date;
 	private JTextField textFieldNum_adults;
 	private JTextField textFieldNum_children;
+	
+	SqlDateModel modelStarDate = new SqlDateModel();
+	SqlDateModel modelEndDate = new SqlDateModel();
+	
+	JDatePanelImpl dPStart_date_panel = new JDatePanelImpl(modelStarDate);
+	JDatePickerImpl dPStart_date = new JDatePickerImpl(dPStart_date_panel, null);
+	
+	JDatePanelImpl dPEnd_date_panel = new JDatePanelImpl(modelEndDate);
+	JDatePickerImpl dPEnd_date = new JDatePickerImpl(dPEnd_date_panel, null);
 
 	/**
 	 * Create the frame.
@@ -38,6 +50,12 @@ public class BookingCreatorView extends JFrame {
 		setTitle("Crear Reserva");
 		pane = new JPanel();
 		pane.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
+		
+		modelStarDate.setDate(2023, 1, 1);
+		modelEndDate.setDate(2023, 1, 10);
+		
+		modelStarDate.setSelected(true);
+		modelEndDate.setSelected(true);
 		
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		setResizable(false);
@@ -72,17 +90,17 @@ public class BookingCreatorView extends JFrame {
 		lblStart_date.setHorizontalAlignment(SwingConstants.CENTER);
 		lblStart_date.setFont(new Font("Roboto Light", Font.PLAIN, 18));
 		
-		textFieldStart_date = new JTextField();
-		lblStart_date.setLabelFor(textFieldStart_date);
-		textFieldStart_date.setColumns(10);
+//		dPStart_date;
+		lblStart_date.setLabelFor(dPStart_date);
+//		dPStart_date;
 		
 		JLabel lblEnd_date = new JLabel("Fecha Salida(Obligatorio)");
 		lblEnd_date.setHorizontalAlignment(SwingConstants.CENTER);
 		lblEnd_date.setFont(new Font("Roboto Light", Font.PLAIN, 18));
 		
-		textFieldEnd_date = new JTextField();
-		lblEnd_date.setLabelFor(textFieldEnd_date);
-		textFieldEnd_date.setColumns(10);
+//		dPEnd_date = new JTextField();
+		lblEnd_date.setLabelFor(dPEnd_date);
+//		dPEnd_date.setColumns(10);
 		
 		JLabel lblNum_adults = new JLabel("Numero de Adultos");
 		lblNum_adults.setHorizontalAlignment(SwingConstants.CENTER);
@@ -118,7 +136,7 @@ public class BookingCreatorView extends JFrame {
 								.addComponent(textFieldUser_id, GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
 								.addGroup(gl_pane.createSequentialGroup()
 									.addGroup(gl_pane.createParallelGroup(Alignment.TRAILING, false)
-										.addComponent(textFieldStart_date, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+										.addComponent(dPStart_date, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
 										.addComponent(lblStart_date, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE))
 									.addPreferredGap(ComponentPlacement.UNRELATED)
 									.addGroup(gl_pane.createParallelGroup(Alignment.TRAILING)
@@ -128,7 +146,7 @@ public class BookingCreatorView extends JFrame {
 											.addGap(4))
 										.addGroup(gl_pane.createSequentialGroup()
 											.addPreferredGap(ComponentPlacement.RELATED, 0, Short.MAX_VALUE)
-											.addComponent(textFieldEnd_date, GroupLayout.PREFERRED_SIZE, 241, GroupLayout.PREFERRED_SIZE))))
+											.addComponent(dPEnd_date, GroupLayout.PREFERRED_SIZE, 241, GroupLayout.PREFERRED_SIZE))))
 								.addGroup(gl_pane.createSequentialGroup()
 									.addComponent(lblNum_adults, GroupLayout.PREFERRED_SIZE, 231, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
@@ -160,8 +178,8 @@ public class BookingCreatorView extends JFrame {
 							.addComponent(lblStart_date, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_pane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(textFieldStart_date, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(textFieldEnd_date, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+								.addComponent(dPStart_date, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(dPEnd_date, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 						.addComponent(lblEnd_date, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
 					.addGroup(gl_pane.createParallelGroup(Alignment.LEADING)
@@ -192,20 +210,6 @@ public class BookingCreatorView extends JFrame {
 	}
 
 	/**
-	 * @return the textFieldStart_date
-	 */
-	public JTextField getTextFieldStart_date() {
-		return textFieldStart_date;
-	}
-
-	/**
-	 * @return the textFieldEnd_date
-	 */
-	public JTextField getTextFieldEnd_date() {
-		return textFieldEnd_date;
-	}
-
-	/**
 	 * @return the textFieldNum_adults
 	 */
 	public JTextField getTextFieldNum_adults() {
@@ -227,20 +231,6 @@ public class BookingCreatorView extends JFrame {
 	}
 
 	/**
-	 * @param textFieldStart_date the textFieldStart_date to set
-	 */
-	public void setTextFieldStart_date(JTextField textFieldStart_date) {
-		this.textFieldStart_date = textFieldStart_date;
-	}
-
-	/**
-	 * @param textFieldEnd_date the textFieldEnd_date to set
-	 */
-	public void setTextFieldEnd_date(JTextField textFieldEnd_date) {
-		this.textFieldEnd_date = textFieldEnd_date;
-	}
-
-	/**
 	 * @param textFieldNum_adults the textFieldNum_adults to set
 	 */
 	public void setTextFieldNum_adults(JTextField textFieldNum_adults) {
@@ -252,6 +242,34 @@ public class BookingCreatorView extends JFrame {
 	 */
 	public void setTextFieldNum_children(JTextField textFieldNum_children) {
 		this.textFieldNum_children = textFieldNum_children;
+	}
+
+	/**
+	 * @return the dPStart_date
+	 */
+	public JDatePickerImpl getdPStart_date() {
+		return dPStart_date;
+	}
+
+	/**
+	 * @param dPStart_date the dPStart_date to set
+	 */
+	public void setdPStart_date(JDatePickerImpl dPStart_date) {
+		this.dPStart_date = dPStart_date;
+	}
+
+	/**
+	 * @return the dPEnd_date
+	 */
+	public JDatePickerImpl getdPEnd_date() {
+		return dPEnd_date;
+	}
+
+	/**
+	 * @param dPEnd_date the dPEnd_date to set
+	 */
+	public void setdPEnd_date(JDatePickerImpl dPEnd_date) {
+		this.dPEnd_date = dPEnd_date;
 	}
 	
 	

@@ -59,8 +59,6 @@ public class ButtonEditor extends DefaultCellEditor {
     @Override
     public Object getCellEditorValue() {
         if (isPushed) {
-        	// Passes the email that correlates the table row with the user in the ArrayList, which is the user of that row in the table
-        	// The AL index is +1 because the first row in the DB is null
             if (al_user!=null) {
             	UserListViewController.updateUser(al_user.get(table.getSelectedRow()).getEmail());
 			} else if (al_room!=null) {

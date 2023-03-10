@@ -5,11 +5,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import models.UserModel;
 import utils.UserDataChecker;
 import views.UserEditorView;
@@ -18,10 +19,15 @@ public class UserEditorViewController implements ActionListener, MouseListener {
 	private final UserEditorView view;
 	private final UserModel user;
 
-	public UserEditorViewController(UserEditorView view, String u_id) {
+	public UserEditorViewController(UserEditorView view, String user_id) {
 		super();
 		this.view = view;
-		user=UserModel.getUser(u_id);
+
+		Map<String, Object> params=new HashMap<String, Object>();
+		params.put("email", user_id);
+		
+		user=UserModel.getUser(params);
+		
 		if (!(user==null)) {
 			updateFields();
 		} else {
@@ -104,7 +110,7 @@ public class UserEditorViewController implements ActionListener, MouseListener {
 				
 				user.setPassword((!password_new.equals("")?password_new:null));
 				
-				UserModel.updateUser(user);
+				user.updateUser();
 				
 				view.dispose();
 			} else {

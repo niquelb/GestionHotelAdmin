@@ -6,6 +6,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import javax.swing.JFrame;
 
+import views.ChatView;
+
 public class SimpleButtonBar extends javax.swing.JPanel {
 
     public SimpleButtonBar() {
@@ -31,7 +33,8 @@ public class SimpleButtonBar extends javax.swing.JPanel {
         cmdClose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                System.exit(0);
+//            	fram.dispose();
+            	System.exit(0);
             }
         });
         cmdMinimize.addActionListener(new ActionListener() {

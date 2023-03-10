@@ -5,11 +5,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.mariadb.jdbc.Connection;
 
 import main.Main;
 import utils.BDConnector;
+import utils.ResultSetGen;
 
 /**
  * Model class for the Bookings table
@@ -32,14 +35,14 @@ public class BookingModel {
 	public final static int ROWS_PER_PAGE=10;
 	
 	/**
-	 * Connection object
+	 * DB Table name
 	 */
-	private static Connection conn=Main.conn;
-	
+	public final static String TABLE_NAME="reservas";
+
 	/**
-	 * ResultSet with all of the rooms
+	 * ResultSet with all of the users
 	 */
-	private static ResultSet rs=BDConnector.execStmt("SELECT * FROM reservas;", conn);
+	private static ResultSet rs=ResultSetGen.generateResultSet(null, TABLE_NAME);
 	
 	/**
 	 * Default constructor
@@ -103,123 +106,93 @@ public class BookingModel {
 	}
 
 	/**
-	 * Method for getting an ArrayList with all bookings or with
-	 * specified filters
+	 * Method for getting an array list with all bookings or using specified parameters
 	 * 
-	 * @param user_id User ID
-	 * @param start_date Earliest date to be filtered by
-	 * @param end_date Latest date to be filtered by, if combined with start_date creates a date interval
-	 * @param page_num page_number ! MUST START FROM 0 ! (First page is number 0, second number 1 etc.)
-	 * @return ArrayList with BookingModel objects, null if error
-	 * @throws Exception if end_date ISN'T after start_date
+	 * @param params Map object with the column-name and the value for filtering
+	 * @param page_num Page number
+	 * @return ArrayList with BookingModel object, null if error
 	 */
-	public static ArrayList<BookingModel> getBookingList(String user_id, Date start_date, Date end_date, int page_num) throws Exception {
+	public static ArrayList<BookingModel> getBookingList(Map<String, Object> params, int page_num) {
 		ArrayList<BookingModel> al=new ArrayList<>();
-		page_num=page_num*ROWS_PER_PAGE+1;
+		page_num=page_num*ROWS_PER_PAGE;
 		
-		int rows_per_page=(getTotalRows()<ROWS_PER_PAGE)?getTotalRows():ROWS_PER_PAGE;
-		
-		user_id=(user_id==null)?"":user_id;
+		params = params==null
+				? new HashMap<String, Object>()
+				: params;
 		
 		try {
-			rs.absolute(page_num);
-			if (user_id.equals("") && start_date==null && end_date==null) {
-				for (int i = 0; i < rows_per_page; i++) {
+			if (params.isEmpty()) {
+				rs.absolute(page_num);
+
+				int i = 0;
+
+				while (rs.next() && i < ROWS_PER_PAGE) {
 					al.add(new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
 							rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
 							rs.getString("user_id")));
-					
-					rs.next();
+					i++;
 				}
+
 				return al;
-			} if (!user_id.equals("")) {
-				for (int i = 0; i < rows_per_page; i++) {
-					if (rs.getString("user_id").toUpperCase().contains(user_id.toUpperCase())) {
-						al.add(new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
-								rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
-								rs.getString("user_id")));
-					}
-					
-					rs.next();
-				}
-				return al;
-			} if (start_date!=null) {
-				if (end_date!=null) {
-					if (!end_date.after(start_date)) {
-						throw new Exception("End date is not after start date.");
-					}
-					for (int i = 0; i < rows_per_page; i++) {
-						if ((rs.getDate("fecha_entrada").after(start_date) || rs.getDate("fecha_entrada").equals(start_date)) &&
-								(rs.getDate("fecha_salida").before(end_date) || rs.getDate("fecha_salida").equals(end_date))) {
-							al.add(new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
-									rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
-									rs.getString("user_id")));
-						}
-						
-						rs.next();
-					}
-					return al;
-				}
-				
-				for (int i = 0; i < rows_per_page; i++) {
-					if (rs.getDate("fecha_entrada").after(start_date) || rs.getDate("fecha_entrada").equals(start_date)) {
-						al.add(new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
-								rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
-								rs.getString("user_id")));
-					}
-					
-					rs.next();
-				}
-				return al;
-			} if (end_date!=null) {
-				for (int i = 0; i < rows_per_page; i++) {
-					if (rs.getDate("fecha_salida").before(end_date) || rs.getDate("fecha_salida").equals(end_date)) {
-						al.add(new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
-								rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
-								rs.getString("user_id")));
-					}
-					
-					rs.next();
-				}
-				return al;
+			} 
+			
+			ResultSet rs=ResultSetGen.generateResultSet(params,TABLE_NAME); 
+			
+			//TODO implement date ranges and check end date
+
+			int i=0;
+
+			while (rs.next() && i < ROWS_PER_PAGE) {
+				al.add(new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
+						rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
+						rs.getString("user_id")));
+				i++;
 			}
+
+			return al;
+
+			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			// TODO: handle exception
 			e.printStackTrace();
 			return null;
 		}
-		return null;
 		
 	}
 	
 	/**
-	 * Method for getting 1 BookingModel object from the
-	 * ResultSet based on the given ID, if it is -1 (or any
-	 * other negative number), the first booking will be
-	 * returned
+	 * Method for getting 1 BookingModel object with specified parameters, if none are given, the first result will be given
 	 * 
-	 * @param booking_id Booking ID for filtering
+	 * @param params Map object with the column-name and the value for filtering
 	 * @return BookingModel object, null if error
 	 */
-	public static BookingModel getBooking(int booking_id) {
+	public static BookingModel getBooking(Map<String, Object> params) {
+
+		params = params==null
+				? new HashMap<String, Object>()
+				: params;
+		
 		try {
-			if (booking_id<=0) {
+			
+			if (params.isEmpty()) {
 				rs.first();
 				return new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
 						rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
 						rs.getString("user_id"));
-			}
 			
-			rs.beforeFirst();
-			while (rs.next()) {
-				if (rs.getInt("id")==booking_id) {
-					return new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
-							rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
-							rs.getString("user_id"));
-				}
 			}
+
+			ResultSet rs=ResultSetGen.generateResultSet(params,TABLE_NAME);
+
+			if (rs.first()) {
+				return new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
+						rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
+						rs.getString("user_id"));
 			
+			}
+
 			return null;
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -228,67 +201,18 @@ public class BookingModel {
 	}
 	
 	/**
-	 * Method for getting 1 BookingModel object from the
-	 * ResultSet based on the given User ID and start_date
+	 * Method for creating bookings through the ResultSet
 	 * 
-	 * @param user_id User ID for filtering
-	 * @param start_date Start date for filtering
-	 * @return BookingModel object, null if error or none found with filters
-	 */
-	public static BookingModel getBooking(String user_id, Date start_date) {
-		
-		user_id=(user_id=="")?null:user_id;
-		
-		try {
-			if (user_id==null) {
-				rs.first();
-				return new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
-						rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
-						rs.getString("user_id"));
-			}
-			
-			if (start_date==null) {
-				rs.beforeFirst();
-				while (rs.next()) {
-					if (rs.getString("user_id").equals(user_id)) {
-						return new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
-								rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
-								rs.getString("user_id"));
-					}
-					break;
-				}
-			}
-			
-			rs.beforeFirst();
-			while (rs.next()) {
-				if (rs.getString("user_id").equals(user_id) && rs.getDate("fecha_entrada").equals(start_date)) {
-					return new BookingModel(rs.getInt("id"), rs.getInt("numero_adultos"), rs.getInt("numero_ninyos"), rs.getTimestamp("fecha"),
-							rs.getDate("fecha_entrada"), rs.getDate("fecha_salida"),
-							rs.getString("user_id"));
-				}
-			}
-			
-			return null;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	/**
-	 * Method for creating bookings through the
-	 * ResultSet using a given BookingModel object
-	 * 
-	 * @param new_booking BookingModel object to be used
 	 * @throws Exception if end_date ISN'T after start_date
 	 */
-	public static void createBooking(BookingModel new_booking) throws Exception {
-		Date start_date=new_booking.getDate_start();
-		Date end_date=new_booking.getDate_end();
-		int num_adults=(new_booking.getNum_adults()<=0)?1:new_booking.getNum_adults();
-		int num_children=new_booking.getNum_children();
-		String user_id=new_booking.getUser_id();
+	public void createBooking() throws Exception {
+		Date start_date=this.getDate_start();
+		Date end_date=this.getDate_end();
+		int num_adults=(this.getNum_adults()<=0)
+				? 1
+				: this.getNum_adults();
+		int num_children=this.getNum_children();
+		String user_id=this.getUser_id();
 		
 		if (!end_date.after(start_date)) {
 			throw new Exception("End date is not after start date.");
@@ -312,39 +236,84 @@ public class BookingModel {
 	}
 	
 	/**
-	 * Method for updating a booking through the
-	 * ResultSet using a given BookingModel object
+	 * Method for updating a booking through the ResultSet
 	 * 
-	 * @param new_booking BookingModel object to be used
 	 * @throws Exception if end_date ISN'T after start_date or if ID isn't valid (less than 0)
 	 */
-	public static void updateBooking(BookingModel new_booking) throws Exception {
-		int id=new_booking.getId();
+	public void updateBooking() throws Exception {
+		int id=this.getId();
 		if (id<=0) {
-			throw new Exception("ID not valid");
+			throw new IllegalArgumentException("ID not valid");
 		}
 		
-		Date start_date=new_booking.getDate_start();
-		Date end_date=new_booking.getDate_end();
-		int num_adults=(new_booking.getNum_adults()<=0)?1:new_booking.getNum_adults();
-		int num_children=new_booking.getNum_children();
-		String user_id=new_booking.getUser_id();
+		Date start_date=this.getDate_start();
+		Date end_date=this.getDate_end();
+		int num_adults=(this.getNum_adults()<=0)
+				? 1
+				: this.getNum_adults();
+		int num_children=this.getNum_children();
+		String user_id=this.getUser_id();
 		
 		if (!end_date.after(start_date)) {
 			throw new Exception("End date is not after start date.");
 		}
 		
+		Map<String, Object> update_fields=new HashMap<String, Object>();
+		update_fields.put("fecha_entrada", start_date);
+		update_fields.put("fecha_salida", end_date);
+		update_fields.put("numero_adultos", num_adults);
+		update_fields.put("numero_ninyos", num_children);
+		update_fields.put("user_id", user_id);
+		
+		Map<String, Object> params=new HashMap<String, Object>();
+
+		params.put("id", id);
+		
 		try {
-			while(rs.next()) {
-				if (rs.getInt("id")==id) {
-					rs.updateDate("fecha_entrada", start_date);
-					rs.updateDate("fecha_salida", end_date);
-					rs.updateInt("numero_adults", num_adults);
-					rs.updateInt("numero_ninyos", num_children);
-					rs.updateString("user_id", user_id);
-					
-					rs.updateRow();
+			ResultSet rs=ResultSetGen.generateResultSet(params, TABLE_NAME);
+			if (rs.first()) {
+				for (Map.Entry<String, Object> entry : update_fields.entrySet()) {
+					if (entry.getValue() instanceof String) {
+						rs.updateString(entry.getKey(), (String) entry.getValue());
+						break;
+					}
+					if (entry.getValue() instanceof Integer) {
+						rs.updateInt(entry.getKey(), (Integer) entry.getValue());
+						break;
+					}
+					if (entry.getValue() instanceof Date) {
+						rs.updateDate(entry.getKey(), (Date) entry.getValue());
+						break;
+					}
 				}
+
+				rs.updateRow();
+
+				refreshResultSet();
+			}
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	public void deleteBooking() {
+		int id=this.getId();
+		if (id<=0) {
+			throw new IllegalArgumentException("ID not valid");
+		}
+		
+		Map<String, Object> params=new HashMap<String, Object>();
+
+		params.put("id", id);
+		
+		try {
+			ResultSet rs=ResultSetGen.generateResultSet(params, TABLE_NAME);
+			if (rs.first()) {
+				rs.deleteRow();
+
+				refreshResultSet();
 			}
 			
 		} catch (SQLException e) {
@@ -367,6 +336,13 @@ public class BookingModel {
 			e.printStackTrace();
 			return -1;
 		}
+	}
+
+	/**
+	 * Method for refreshing the Result Set
+	 */
+	public static void refreshResultSet() {
+		rs=ResultSetGen.generateResultSet(null, TABLE_NAME);
 	}
 
 	/**
@@ -416,55 +392,6 @@ public class BookingModel {
 	 */
 	public String getUser_id() {
 		return user_id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	/**
-	 * @param num_adults the num_adults to set
-	 */
-	public void setNum_adults(int num_adults) {
-		this.num_adults = num_adults;
-	}
-
-	/**
-	 * @param num_children the num_children to set
-	 */
-	public void setNum_children(int num_children) {
-		this.num_children = num_children;
-	}
-
-	/**
-	 * @param date the date to set
-	 */
-	public void setDate(Timestamp date) {
-		this.date = date;
-	}
-
-	/**
-	 * @param date_start the date_start to set
-	 */
-	public void setDate_start(Date date_start) {
-		this.date_start = date_start;
-	}
-
-	/**
-	 * @param date_end the date_end to set
-	 */
-	public void setDate_end(Date date_end) {
-		this.date_end = date_end;
-	}
-
-	/**
-	 * @param user_id the user_id to set
-	 */
-	public void setUser_id(String user_id) {
-		this.user_id = user_id;
 	}
 
 	

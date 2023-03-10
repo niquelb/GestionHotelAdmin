@@ -20,7 +20,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import utils.ParameterStringBuilder;
 import views.LoginView;
 import views.MainView;
@@ -71,11 +70,12 @@ public class LoginViewController implements ActionListener, MouseListener{
 					new MainView(user_id);
 					
 				} else {
-					view.getLblError().setVisible(true);;
+					view.getLblError().setVisible(true);
 				}
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				CONNECTION.disconnect();
 			}
 				
 			break;

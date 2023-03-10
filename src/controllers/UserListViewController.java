@@ -3,7 +3,10 @@ package controllers;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Console;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
@@ -21,7 +24,9 @@ public class UserListViewController implements ActionListener {
 	private final UserListView view;
 	private String email=null,name=null;
 	private int page_num=0;
-	private int total_pages=(int) Math.ceil(UserModel.getTotalRows()/10)-1;
+	private int total_pages=(int) (Math.ceil(UserModel.getTotalRows()/10)<0
+			? Math.ceil(UserModel.getTotalRows()/10)
+			: Math.ceil(UserModel.getTotalRows()/10)-1);
 	
 	public UserListViewController(UserListView view) {
 		super();
@@ -33,7 +38,13 @@ public class UserListViewController implements ActionListener {
 		JTable table=view.getTable();
 		JScrollPane pane=view.getPane();
 		
-		ArrayList<UserModel> al=UserModel.getUserList(email, name, page_num);
+		Map<String, Object> params=new HashMap<String, Object>();
+		
+		if (email!=null && !email.equals("")) params.put("email", email);
+		if (name!=null && !name.equals("")) params.put("nombre", name);
+		
+		
+		ArrayList<UserModel> al=UserModel.getUserList(params, page_num);
 		
 		DefaultTableModel model=new DefaultTableModel();
 		table.setModel(model);
@@ -44,7 +55,6 @@ public class UserListViewController implements ActionListener {
 		model.addColumn("Telefono");
 		model.addColumn("Modificar");
 		
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.getTableHeader().setReorderingAllowed(false);
 		
 		for (UserModel userModel : al) {
@@ -60,11 +70,10 @@ public class UserListViewController implements ActionListener {
 		table.getColumn("Modificar").setCellRenderer(new ButtonRenderer());
 		table.getColumn("Modificar").setCellEditor(new ButtonEditor(new JCheckBox(), table, al, null));
 		
-		// The width is -18 to compensate for the vertical scrollbar
-		table.setPreferredSize(new Dimension(pane.getWidth()-18, pane.getHeight()));
-		
 		pane.setViewportView(table);
-		pane.setSize(pane.getWidth(), table.getRowHeight()*12);
+		
+		table.setPreferredScrollableViewportSize(table.getPreferredSize());
+		
 	}
 
 	@Override
@@ -122,6 +131,7 @@ public class UserListViewController implements ActionListener {
 			
 			break;
 		case "last_page":
+			System.out.println(total_pages);
 			page_num=total_pages;
 			updatePageTextField();
 			buildTable(email, name);
