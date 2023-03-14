@@ -69,8 +69,6 @@ public class BookingCreatorViewController implements ActionListener, MouseListen
 						:Integer.parseInt(String.valueOf(view.getTextFieldNum_children().getText()));
 			} catch (Exception e2) {}
 			
-			System.out.println("Fecha:"+start_date+'/'+end_date);
-			
 			if (user_id==null) {
 				JOptionPane.showMessageDialog(view,
 					    "El email del usuario no puede estar vacio.",
@@ -104,16 +102,9 @@ public class BookingCreatorViewController implements ActionListener, MouseListen
 			}
 			
 			try {
-				new BookingModel(num_adults, num_children, start_date, end_date, user_id).createBooking();
+				int inserted_id = new BookingModel(num_adults, num_children, start_date, end_date, user_id).createBooking();
 				
-				Map<String, Object> params=new HashMap<String, Object>();
-				
-				params.put("user_id", user_id);
-				params.put("fecha_entrada", start_date);
-				
-				BookingModel bm=BookingModel.getBooking(params);
-				
-				new BookingRoomCreatorView(bm.getId());
+				new BookingRoomCreatorView(inserted_id);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			} finally {

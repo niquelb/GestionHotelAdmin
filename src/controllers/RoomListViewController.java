@@ -26,9 +26,7 @@ public class RoomListViewController implements ActionListener {
 	private int num_guests;
 	private double price;
 	private int page_num=0;
-	private int total_pages=(int) (Math.ceil(RoomModel.getTotalRows()/10)<0
-			? Math.ceil(RoomModel.getTotalRows()/10)
-			: Math.ceil(RoomModel.getTotalRows()/10)-1);
+	private int total_pages=(int) Math.ceil(RoomModel.getTotalRows()/10);
 	
 	public RoomListViewController(RoomListView view) {
 		super();
@@ -156,7 +154,6 @@ public class RoomListViewController implements ActionListener {
 			break;
 		case "last_page":
 			page_num=total_pages;
-			System.out.println(total_pages);
 			updatePageTextField();
 			buildTable(name, price, num_guests);
 				

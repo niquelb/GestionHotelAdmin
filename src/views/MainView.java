@@ -102,9 +102,9 @@ public class MainView extends JFrame {
 		center_panel.setLayout(new CardLayout(0, 0));
 		user_list.setBackground(new Color(45, 45, 45));
 		room_list.setBackground(new Color(45, 45, 45));
+		center_panel.add(user_list, USER_VIEW);
 		center_panel.add(booking_list, BOOKING_VIEW);
 		center_panel.add(room_list, ROOM_VIEW);
-		center_panel.add(user_list, USER_VIEW);
 
 		GroupLayout gl_navi_panel = new GroupLayout(navi_panel);
 		gl_navi_panel.setHorizontalGroup(

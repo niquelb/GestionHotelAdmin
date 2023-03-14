@@ -77,6 +77,7 @@ public class BDConnector {
 				         ResultSet.TYPE_SCROLL_INSENSITIVE,
 				         ResultSet.CONCUR_UPDATABLE);
 				rs=stmt.executeQuery(stmt_str);
+
 			} catch (SQLException e) {
 				System.err.println(e.getMessage());
 			}

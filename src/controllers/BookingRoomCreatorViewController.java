@@ -31,7 +31,7 @@ public class BookingRoomCreatorViewController implements ActionListener, MouseLi
 	private int page_num=0;
 	private JTable table;
 	private ArrayList<RoomModel> al;
-	private ArrayList<RoomModel> al2=new ArrayList<>();
+	private ArrayList<RoomModel> al_rooms=new ArrayList<>();
 	
 	private boolean isCancelled=true;
 
@@ -89,7 +89,6 @@ public class BookingRoomCreatorViewController implements ActionListener, MouseLi
 		
 		
 		table.setPreferredScrollableViewportSize(table.getPreferredSize());
-		table.addMouseListener(this);
 		
 	}
 	
@@ -106,8 +105,6 @@ public class BookingRoomCreatorViewController implements ActionListener, MouseLi
 		}
 		
 		if (e.getSource().getClass()==JTable.class) {
-			System.out.println(al.get(view.getRow()).getName());
-			
 			Map<String, Object> params=new HashMap<String, Object>();
 			
 			params.put("id", al.get(view.getRow()).getId());
@@ -127,9 +124,8 @@ public class BookingRoomCreatorViewController implements ActionListener, MouseLi
 				    );
 			
 			if (n==0) {
-				al2.add(selected_room);
+				al_rooms.add(selected_room);
 				
-				System.out.println(al2);
 				
 				String[] arr2= {"Si","No"};
 				int m = JOptionPane.showOptionDialog(view,
@@ -152,8 +148,10 @@ public class BookingRoomCreatorViewController implements ActionListener, MouseLi
 						    arr[0]
 						    );
 					if (o==0) {
-						for (RoomModel rm : al2) {
-							new BookingRoomModel(rm.getId(), booking.getId(), al.size()-1, rm.getPrice()).createBooking();
+						for (RoomModel rm : al_rooms) {
+							BookingRoomModel brm=new BookingRoomModel(rm.getId(), booking.getId(), al.size()-1, rm.getPrice());
+							
+							brm.createBooking();
 						}
 						
 					}

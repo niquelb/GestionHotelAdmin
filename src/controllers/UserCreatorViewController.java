@@ -111,7 +111,6 @@ public class UserCreatorViewController implements ActionListener, MouseListener{
 				    );
 			
 			if (n==0) {
-				System.out.println("Creation Start");
 				new UserModel(email, password, name, last_names, phone).createUser();
 				view.dispose();
 			} else {

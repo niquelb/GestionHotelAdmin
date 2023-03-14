@@ -1,46 +1,44 @@
 package views;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
-
-import controllers.BookingRoomCreatorViewController;
+import java.awt.EventQueue;
+import java.awt.Font;
 
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.SwingConstants;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
-public class BookingRoomCreatorView extends JFrame {
+import controllers.BookingRoomCreatorViewController;
+import controllers.BookingRoomListViewController;
 
-	private BookingRoomCreatorViewController controller;
+public class BookingRoomListView extends JFrame {
 	
-	private javaswingdev.GoogleMaterialIcon iconClose=new javaswingdev.GoogleMaterialIcon();
+private javaswingdev.GoogleMaterialIcon iconClose=new javaswingdev.GoogleMaterialIcon();
+
+	private final BookingRoomListViewController controller;
 	
 	private JScrollPane scrollPane;
 	private JTable table=new JTable();
 	private JPanel pane;
+	
+	private JLabel lblTitle;
 
-	/**
-	 * Create the frame.
-	 */
-	public BookingRoomCreatorView(int booking_id) {
-		setTitle("Crear Reserva");
+	public BookingRoomListView(int booking_id) {
+		setTitle("Reservas");
 		pane = new JPanel();
 		pane.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
 		
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-//		setResizable(false);
 		setUndecorated(true);
 		setAlwaysOnTop(true);
         setLocationByPlatform(true);
@@ -55,7 +53,7 @@ public class BookingRoomCreatorView extends JFrame {
 		top_panel.setPreferredSize(new Dimension(pane.getWidth(), 75));
 		pane.add(top_panel, BorderLayout.NORTH);
 		
-		JLabel lblTitle = new JLabel("Crear Reserva | Seleccionar Habitaciones");
+		lblTitle = new JLabel();
 		lblTitle.setFont(new Font("Roboto Black", Font.BOLD, 24));
 		
 		iconClose.setColor1(new java.awt.Color(111, 111, 111));
@@ -108,15 +106,9 @@ public class BookingRoomCreatorView extends JFrame {
 		west_panel.setPreferredSize(new Dimension(10, pane.getHeight()));
 		pane.add(west_panel, BorderLayout.WEST);
 		
-		controller=new BookingRoomCreatorViewController(this, booking_id);
+		controller=new BookingRoomListViewController(this, booking_id);
 		
-
-		table.addMouseListener(controller);
 		lblCloseBtn.addMouseListener(controller);
-	}
-	
-	public int getRow() {
-		return table.getSelectedRow();
 	}
 
 	/**
@@ -127,17 +119,17 @@ public class BookingRoomCreatorView extends JFrame {
 	}
 
 	/**
-	 * @return the table
-	 */
-	public JTable getTable() {
-		return table;
-	}
-
-	/**
 	 * @param scrollPane the scrollPane to set
 	 */
 	public void setScrollPane(JScrollPane scrollPane) {
 		this.scrollPane = scrollPane;
+	}
+
+	/**
+	 * @return the table
+	 */
+	public JTable getTable() {
+		return table;
 	}
 
 	/**
@@ -146,7 +138,20 @@ public class BookingRoomCreatorView extends JFrame {
 	public void setTable(JTable table) {
 		this.table = table;
 	}
-	
-	
 
+	/**
+	 * @return the lblTitle
+	 */
+	public JLabel getLblTitle() {
+		return lblTitle;
+	}
+
+	/**
+	 * @param lblTitle the lblTitle to set
+	 */
+	public void setLblTitle(JLabel lblTitle) {
+		this.lblTitle = lblTitle;
+	}
+	
+	
 }

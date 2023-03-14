@@ -228,7 +228,7 @@ public class UserModel {
 			rs.updateString("password", password);
 
 			rs.insertRow();
-
+			
 			refreshResultSet();
 		} catch (SQLException e) {
 			// TODO: handle exception

@@ -113,7 +113,6 @@ public class RoomModel {
 		params = params==null
 				? new HashMap<String, Object>()
 						: params;
-		int rows_per_page=getTotalRows();
 
 		try {
 			if (params.isEmpty()) {
@@ -121,7 +120,7 @@ public class RoomModel {
 
 				int i = 0;
 
-				while (rs.next() && i < rows_per_page) {
+				while (rs.next() && i < ROWS_PER_PAGE) {
 					al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
 							rs.getInt("numero_camas"), rs.getDouble("precio"),
 							rs.getString("nombre"), rs.getString("descripcion")));
@@ -135,7 +134,7 @@ public class RoomModel {
 
 			int i=0;
 
-			while (rs.next() && i < rows_per_page) {
+			while (rs.next() && i < ROWS_PER_PAGE) {
 				al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
 						rs.getInt("numero_camas"), rs.getDouble("precio"),
 						rs.getString("nombre"), rs.getString("descripcion")));
@@ -301,7 +300,6 @@ public class RoomModel {
 	public static int getTotalRows() {
 		try {
 			rs.last();
-			System.out.println("------------------>"+rs.getString("nombre"));
 			return rs.getRow();
 		} catch (SQLException e) {
 			// TODO: handle exception

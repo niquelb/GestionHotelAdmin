@@ -95,7 +95,6 @@ public class RoomCreatorViewController implements ActionListener, MouseListener{
 				new RoomModel(quantity, max_guests, num_beds, price, name, description).createRoom();
 				view.dispose();
 			} else {
-				System.out.println("cancel");
 				view.dispose();
 			}
 			

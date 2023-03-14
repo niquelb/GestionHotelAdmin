@@ -131,7 +131,6 @@ public class UserListViewController implements ActionListener {
 			
 			break;
 		case "last_page":
-			System.out.println(total_pages);
 			page_num=total_pages;
 			updatePageTextField();
 			buildTable(email, name);

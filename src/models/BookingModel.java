@@ -205,7 +205,7 @@ public class BookingModel {
 	 * 
 	 * @throws Exception if end_date ISN'T after start_date
 	 */
-	public void createBooking() throws Exception {
+	public int createBooking() throws Exception {
 		Date start_date=this.getDate_start();
 		Date end_date=this.getDate_end();
 		int num_adults=(this.getNum_adults()<=0)
@@ -228,9 +228,15 @@ public class BookingModel {
 			rs.updateString("user_id", user_id);
 			
 			rs.insertRow();
+			
+			rs.last();
+			
+			return rs.getInt("id");
+			
 		} catch (SQLException e) {
 			// TODO: handle exception
 			e.printStackTrace();
+			return -1;
 		}
 		
 	}

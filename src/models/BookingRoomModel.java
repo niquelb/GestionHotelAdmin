@@ -174,6 +174,35 @@ public class BookingRoomModel {
 	}
 	
 	/**
+	 * Method for getting an ArrayList of RoomModel objects that are associated with a given booking id in the bookings_rooms table
+	 * @param booking_id Booking ID
+	 * @return Arraylist with RoomModel objects, null if error
+	 */
+	public static ArrayList<RoomModel> getRoomsByBooking(int booking_id) {
+		ArrayList<RoomModel> al=new ArrayList<>();
+
+		
+		String query = "SELECT * "
+				+ "FROM habitaciones "
+				+ "WHERE id IN (SELECT habitacion_id FROM reservas_habitaciones WHERE reserva_id="+booking_id+")";
+		
+		ResultSet rs=BDConnector.execStmt(query, Main.conn);
+		
+		try {
+			while (rs.next()) {
+				al.add(new RoomModel(rs.getInt("id"), rs.getInt("cantidad"), rs.getInt("numero_maximo_personas"),
+						rs.getInt("numero_camas"), rs.getDouble("precio"),
+						rs.getString("nombre"), rs.getString("descripcion")));
+			}
+			
+			return al;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
 	 * Method for inserting a booking into the DB through the ResultSet
 	 */
 	public void createBooking() {
@@ -188,7 +217,6 @@ public class BookingRoomModel {
 		
 		//TODO check FKs
 		
-		
 		try {
 			rs.moveToInsertRow();
 			
@@ -199,7 +227,7 @@ public class BookingRoomModel {
 			
 			rs.insertRow();
 			
-			refreshResultSet();
+			rs.beforeFirst();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -227,6 +255,14 @@ public class BookingRoomModel {
 	 */
 	public static void refreshResultSet() {
 		rs=ResultSetGen.generateResultSet(null, TABLE_NAME);
+	}
+	
+	
+
+	@Override
+	public String toString() {
+		return "BookingRoomModel [id=" + id + ", room_id=" + room_id + ", booking_id=" + booking_id + ", quantity="
+				+ quantity + ", price=" + price + "]";
 	}
 
 	/**

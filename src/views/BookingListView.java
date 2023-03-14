@@ -201,10 +201,17 @@ public class BookingListView extends JPanel {
 		btnLastPage.addActionListener(controller);
 		btnLastPage.setActionCommand("last_page");
 		
+
+		table.addMouseListener(controller);
+		
 		ComponentInit.setButtonProperties(btnSubmit, controller);
 		ComponentInit.setButtonProperties(btnClear, controller);
 		ComponentInit.setButtonProperties(btnCreate_booking, controller);
 
+	}
+	
+	public int getRow() {
+		return table.getSelectedRow();
 	}
 
 	/**

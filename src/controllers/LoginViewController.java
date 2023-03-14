@@ -35,8 +35,8 @@ public class LoginViewController implements ActionListener, MouseListener{
 	private LoginView view;
 	private String user_id, password;
 	
-	private final URL URL;
-	private final HttpURLConnection CONNECTION;
+	private final URL url=new URL("http://localhost/gestionhotelera/sw_user.php");
+	private HttpURLConnection conn;
 	private int conn_status;
 	private JSONParser parser = new JSONParser();
 	
@@ -50,8 +50,7 @@ public class LoginViewController implements ActionListener, MouseListener{
 	public LoginViewController(LoginView view) throws IOException {
 		super();
 		this.view = view;
-		URL=new URL("http://localhost/gestionhotelera/sw_user.php");
-		CONNECTION = (HttpURLConnection) URL.openConnection();
+		
 	}
 
 	/**
@@ -67,6 +66,7 @@ public class LoginViewController implements ActionListener, MouseListener{
 			try {
 				if(login(user_id,password)) {
 					view.dispose();
+					conn.disconnect();
 					new MainView(user_id);
 					
 				} else {
@@ -75,8 +75,8 @@ public class LoginViewController implements ActionListener, MouseListener{
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-				CONNECTION.disconnect();
-			}
+				conn.disconnect();
+			} 
 				
 			break;
 		default:
@@ -93,33 +93,27 @@ public class LoginViewController implements ActionListener, MouseListener{
 	 */
 	public boolean login(String user_id, String password) throws IOException {
 		
-		CONNECTION.setRequestMethod("POST");
+		conn = (HttpURLConnection) url.openConnection();
 		
+		conn.setRequestMethod("POST");
 		
-		//TODO Implement BCrypt
-//		String password_hashed=BCrypt.withDefaults().hashToString(12, password.toCharArray());
-//		String password_hashed="$2a$12$tlOgATQKDOjgh.OLtfhZP.4K7bADlGC78CdFANhEQYHVADJhRHJve";
-
-		
-//		System.out.println(BCrypt.verifyer().verify(password.toCharArray(), "$2a$12$tlOgATQKDOjgh.OLtfhZP.4K7bADlGC78CdFANhEQYHVADJhRHJve").verified);
-
 		Map<String, String> parameters = new HashMap<>();
 		parameters.put("action", "login");
 		parameters.put("user", "{\"email\":\""+user_id+"\", \"password\":\""+password+"\"}");
-
-		CONNECTION.setDoOutput(true);
-		DataOutputStream out = new DataOutputStream(CONNECTION.getOutputStream());
+		
+		conn.setDoOutput(true);
+		DataOutputStream out = new DataOutputStream(conn.getOutputStream());
 		out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
 		out.flush();
 		out.close();
 
-		CONNECTION.setConnectTimeout(5000);
-		CONNECTION.setReadTimeout(5000);
+		conn.setConnectTimeout(5000);
+		conn.setReadTimeout(5000);
 
-		conn_status = CONNECTION.getResponseCode();
+		conn_status = conn.getResponseCode();
 		
 		BufferedReader in = new BufferedReader(
-				  new InputStreamReader(CONNECTION.getInputStream()));
+				  new InputStreamReader(conn.getInputStream()));
 		String input_line;
 		StringBuffer content = new StringBuffer();
 		while ((input_line = in.readLine()) != null) {
@@ -133,24 +127,19 @@ public class LoginViewController implements ActionListener, MouseListener{
 				// Parse JSON string using JSON parser.
 				JSONObject object = (JSONObject) parser.parse(content.toString());
 
-				if (object.get("success").toString().equals("true")) {
-					System.out.println(object.get("msg"));
-					CONNECTION.disconnect();
+				if (object.get("success").toString().equals("true")) 
 					return true;
-				} else {
-					System.out.println(object.get("msg"));
-					CONNECTION.disconnect();
+				else 
 					return false;
-				}
 				
 			  } catch (ParseException e) {
 				System.out.println(e.getMessage());
-				CONNECTION.disconnect();
+				conn.disconnect();
 				return false;
 			  }
 		} else {
 			System.out.println("Error en la conexion: "+conn_status);
-			CONNECTION.disconnect();
+			conn.disconnect();
 			return false;
 		}
 

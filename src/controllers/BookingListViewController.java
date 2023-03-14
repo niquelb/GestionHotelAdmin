@@ -2,6 +2,8 @@ package controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.Date;
 import java.time.DateTimeException;
 import java.util.ArrayList;
@@ -21,16 +23,19 @@ import utils.ButtonRenderer;
 import utils.StringToDateConverter;
 import views.BookingCreatorView;
 import views.BookingListView;
+import views.BookingRoomListView;
 
-public class BookingListViewController implements ActionListener{
+public class BookingListViewController implements ActionListener, MouseListener {
 
 	private final BookingListView view;
 	
 	private int page_num=0;
 	private String logged_in_user, user_id;
 	private Date start_date, end_date;
+	
+	private ArrayList<BookingModel> al;
 
-	private int total_pages=(int) Math.ceil(BookingModel.getTotalRows()/10)-1;
+	private int total_pages=(int) Math.ceil(BookingModel.getTotalRows()/10);
 	
 	public BookingListViewController(BookingListView view, String user_id) {
 		super();
@@ -46,7 +51,7 @@ public class BookingListViewController implements ActionListener{
 		JScrollPane pane=view.getPane();
 		JTable table=view.getTable();
 		
-		ArrayList<BookingModel> al=new ArrayList<>();
+		al=new ArrayList<>();
 		
 		Map<String, Object> params=new HashMap<String, Object>();
 		
@@ -82,16 +87,8 @@ public class BookingListViewController implements ActionListener{
 			model.addRow(row);
 			
 		}
-		
-//		table.getColumn("Modificar").setCellRenderer(new ButtonRenderer());
-//		table.getColumn("Modificar").setCellEditor(new ButtonEditor(new JCheckBox(), table, null, al));
 				
 		pane.setViewportView(table);
-		
-		// The width is -18 to compensate for the vertical scrollbar
-//		table.setPreferredSize(pane.getMinimumSize());
-		//TODO fix table size
-		
 		table.setPreferredScrollableViewportSize(table.getPreferredSize());
 		
 	}
@@ -187,7 +184,6 @@ public class BookingListViewController implements ActionListener{
 			
 			break;
 		case "last_page":
-			System.out.println(total_pages);
 			page_num=total_pages;
 			updatePageTextField();
 			try {
@@ -207,6 +203,38 @@ public class BookingListViewController implements ActionListener{
 
 	public void updatePageTextField() {
 		view.getTextFieldCurrentPage().setText(String.valueOf(page_num+1));
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (e.getSource().getClass()==JTable.class) {
+			new BookingRoomListView(al.get(view.getRow()).getId());
+		}
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
